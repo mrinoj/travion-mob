@@ -1,0 +1,1997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Travacations - B2B Travel Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/phosphor-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+        }
+        :root {
+            --primary-slate: #0F172A; /* Near black slate */
+            --accent-teal: #14B8A6;   /* Electric Teal */
+            --accent-teal-dark: #0D9488;
+            --accent-amber: #F59E0B;
+            --primary-indigo: #4F46E5;
+            --success-green: #10B981;
+            --danger-red: #EF4444;
+            --neutral-bg: #F8FAFC; /* Lighter gray for mobile */
+            --neutral-text-light: #64748B;
+            --neutral-text-dark: #0F172A;
+        }
+
+        .hide { display: none !important; }
+
+        /* Mobile specific styles */
+        .bottom-nav-link.active {
+            color: var(--primary-indigo);
+        }
+        .bottom-nav-link.active i {
+            fill: var(--primary-indigo);
+        }
+
+        .booking-tab.active, .clients-tab.active, .team-tab.active {
+            background-color: var(--primary-indigo);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        .search-tab.active {
+            background-color: white;
+            color: var(--primary-indigo);
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+        }
+
+        /* FAB Styles */
+        .fab-container { position: fixed; bottom: 80px; right: 16px; z-index: 999; }
+        .fab {
+            width: 56px; height: 56px; border-radius: 50%;
+            background-color: var(--primary-indigo); color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease-out;
+        }
+        .fab.open { transform: rotate(45deg); }
+        .fab-actions {
+            position: absolute; bottom: 64px; right: 4px;
+            display: flex; flex-direction: column; align-items: center;
+            gap: 12px; opacity: 0; pointer-events: none;
+            transform: translateY(10px);
+            transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+        }
+        .fab-actions.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .fab-action {
+            display: flex; align-items: center; background-color: white;
+            padding: 8px 12px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            font-size: 14px; font-weight: 600; color: var(--neutral-text-dark);
+        }
+
+        /* Swipeable Actions */
+        .swipe-container { position: relative; overflow: hidden; }
+        .swipe-content {
+            will-change: transform;
+            transition: transform 0.3s ease;
+        }
+        .swipe-actions {
+            position: absolute; top: 0; right: 0; bottom: 0;
+            display: flex; align-items: stretch;
+            transform: translateX(100%);
+        }
+        .swipe-action-button {
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 0 20px; color: white;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        /* Animations & Transitions */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(100%); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .toast {
+            animation: slideInUp 0.4s ease-out forwards;
+        }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+        }
+        .modal-content {
+             animation: slideInUp 0.3s ease-out forwards;
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        /* Aurora Background for Login */
+        @keyframes aurora {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .aurora-bg {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: aurora 15s ease infinite;
+        }
+    </style>
+</head>
+<body class="bg-neutral-bg">
+
+    <!-- App Container -->
+    <div id="app-container">
+
+        <!-- ====================================================== -->
+        <!-- ============== LOGIN / ONBOARDING PAGE =============== -->
+        <!-- ====================================================== -->
+        <div id="page-login" class="min-h-screen flex items-center justify-center p-4 aurora-bg">
+            <div class="w-full max-w-md bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/30">
+                <div class="text-center mb-10">
+                    <div class="inline-block p-4 rounded-full" style="background-color: var(--primary-slate);">
+                        <i class="ph-airplane-takeoff text-5xl text-white"></i>
+                    </div>
+                    <h1 class="text-4xl font-bold mt-4" style="color: var(--neutral-text-dark);">Travacations</h1>
+                    <p style="color: var(--neutral-text-light);" class="mt-2">The Future of B2B Travel</p>
+                </div>
+
+                <div class="space-y-4">
+                    <input type="email" placeholder="Email" class="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 placeholder-gray-400 bg-white/70 focus:outline-none focus:ring-2" style="--tw-ring-color: var(--accent-teal);" value="rajesh.kumar@example.com">
+                    <input type="password" placeholder="Password" class="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 placeholder-gray-400 bg-white/70 focus:outline-none focus:ring-2" style="--tw-ring-color: var(--accent-teal);" value="••••••••">
+                </div>
+
+                <button id="login-button" class="w-full text-white font-bold py-3 px-4 rounded-lg mt-8 transition-all duration-300 transform hover:scale-105 active:scale-100" style="background-color: var(--accent-teal);">Login</button>
+
+                <div class="text-center mt-6">
+                    <a href="#" class="text-sm hover:underline" style="color: var(--neutral-text-light);">Forgot Password?</a>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ====================================================== -->
+        <!-- =================== MAIN APP SHELL =================== -->
+        <!-- ====================================================== -->
+        <div id="page-main" class="hide flex flex-col h-screen" style="background-color: var(--neutral-bg);">
+            <!-- Header -->
+            <header id="main-header" class="bg-white/80 backdrop-blur-md p-4 flex justify-between items-center z-10 border-b border-gray-200/80 sticky top-0">
+                <div class="flex items-center">
+                    <button id="back-button" class="hide mr-2 text-gray-500 hover:text-gray-900 p-1 rounded-full hover:bg-gray-200">
+                        <i class="ph-arrow-left text-2xl"></i>
+                    </button>
+                    <div>
+                        <div id="breadcrumb-container" class="text-xs text-gray-500 truncate"></div>
+                        <h1 id="header-title" class="text-xl font-bold" style="color: var(--neutral-text-dark);">Dashboard</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div id="crisis-alert-icon" class="relative cursor-pointer hide">
+                        <i class="ph-bell-ringing text-2xl" style="color: var(--danger-red);"></i>
+                        <span class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-white" style="background-color: var(--danger-red);"></span>
+                    </div>
+                    <div id="profile-button" class="flex items-center space-x-2 cursor-pointer">
+                        <img src="https://placehold.co/40x40/F59E0B/FFFFFF?text=RK" class="w-9 h-9 rounded-full" alt="User Avatar">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main id="main-content" class="flex-1 overflow-y-auto p-4 pb-24">
+                <!-- Content will be injected here -->
+            </main>
+
+            <!-- FAB -->
+            <div id="fab-container" class="fab-container">
+                 <div id="fab-actions" class="fab-actions">
+                     <div data-action="newBooking" class="fab-action cursor-pointer">
+                         <span class="mr-2">New Booking</span> <i class="ph-briefcase text-xl text-indigo-600"></i>
+                     </div>
+                     <div data-action="newItinerary" class="fab-action cursor-pointer">
+                         <span class="mr-2">New Itinerary</span> <i class="ph-scroll text-xl text-indigo-600"></i>
+                     </div>
+                 </div>
+                 <button id="fab" class="fab flex items-center justify-center">
+                     <i class="ph-plus text-3xl"></i>
+                 </button>
+            </div>
+
+
+            <!-- Bottom Navigation -->
+            <footer class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200/80 flex justify-around p-2 z-10">
+                 <button data-view="dashboard" class="bottom-nav-link flex flex-col items-center text-gray-500 w-full py-1 rounded-md">
+                    <i class="ph-fill ph-house text-2xl"></i><span class="text-xs mt-1">Dashboard</span>
+                </button>
+                 <button data-view="bookings" class="bottom-nav-link flex flex-col items-center text-gray-500 w-full py-1 rounded-md">
+                    <i class="ph-fill ph-briefcase text-2xl"></i><span class="text-xs mt-1">Bookings</span>
+                </button>
+                 <button data-view="search" class="bottom-nav-link flex flex-col items-center text-gray-500 w-full py-1 rounded-md">
+                    <i class="ph-fill ph-magnifying-glass text-2xl"></i><span class="text-xs mt-1">Search</span>
+                </button>
+                 <button data-view="marketplace" class="bottom-nav-link flex flex-col items-center text-gray-500 w-full py-1 rounded-md">
+                    <i class="ph-fill ph-storefront text-2xl"></i><span class="text-xs mt-1">Deals</span>
+                </button>
+                 <button data-view="more" class="bottom-nav-link flex flex-col items-center text-gray-500 w-full py-1 rounded-md">
+                    <i class="ph-fill ph-dots-three-circle text-2xl"></i><span class="text-xs mt-1">More</span>
+                </button>
+            </footer>
+
+            <!-- Modal and Toast Container -->
+            <div id="modal-container" class="hide"></div>
+            <div id="toast-container" class="fixed bottom-20 right-4 z-[2000] space-y-2"></div>
+        </div>
+    </div>
+    
+    <script>
+    // ========================================================================
+    // ========================= MOCK DATA ====================================
+    // ========================================================================
+
+    const mockData = {
+        user: { id: 'U_01', name: "Rajesh Kumar", role: 'Admin', agency: "Mumbai Travel Co.", points: 1250, rank: 12, badges: ["Goa Expert", "Top Reviewer '25"] },
+        teams: ["Packages Team", "Flights Team", "Operations Team", "Finance Team"],
+        staff: [
+            { id: 'U_02', name: "Priya S.", role: 'Manager', team: 'Packages Team', stats: { closed: 12, revenue: 850000, margin: 18.5 } },
+            { id: 'U_03', name: "Amit P.", role: 'Agent', team: 'Packages Team', stats: { closed: 8, revenue: 520000, margin: 16.2 } },
+            { id: 'U_04', name: "Sunita M.", role: 'Agent', team: 'Flights Team', stats: { closed: 25, revenue: 310000, margin: 8.1 } },
+        ],
+        leaderboard: [
+            { rank: 1, name: "Priya S.", agency: "Jaipur Journeys", points: 2100 },
+            { rank: 2, name: "Amit P.", agency: "Himalayan Tours", points: 1980 },
+            { rank: 12, name: "Rajesh Kumar", agency: "Mumbai Travel Co.", points: 1250, isCurrentUser: true },
+        ],
+        smartFeed: [
+            { id: 'sf_01', type: 'opportunity', title: 'Pricing Opportunity', text: "Flights to Goa are trending 15% higher for next month. Create a Goa package now to lock in better rates.", action: 'navigate', actionText: 'Create Package', view: 'search', icon: 'ph-trend-up' },
+            { id: 'sf_02', type: 'engagement', title: 'Client Engagement', text: "You haven't contacted the Sharma Family in 3 weeks. They usually book their winter vacation now. Send them some Manali options?", action: 'navigate', actionText: 'Send Options', view: 'client_details', clientId: 'C_01', icon: 'ph-users' },
+            { id: 'sf_03', type: 'alert', title: 'Supplier Alert', text: "Jaipur Royal Cabs' Trust Score dropped 5 points this month due to reviews on vehicle cleanliness.", action: 'navigate', actionText: 'View Details', view: 'supplier_details', supplierId: 'SUP_01', icon: 'ph-warning-circle' },
+        ],
+        kpis: [
+            { label: "Bookings this month", value: "87", change: "+5%" },
+            { label: "Total Revenue", value: "₹28.5L", change: "+12%" },
+            { label: "Client Satisfaction", value: "4.8/5", change: "+0.1" },
+            { label: "Avg. Response Time", value: "2.1 hrs", change: "-8%" },
+        ],
+        upcomingDepartures: [
+            { bookingId: 'BK104', client: 'Jain Corporation', destination: 'Delhi-Agra', departureDate: '2025-10-10' },
+            { bookingId: 'BK103', client: 'Mr. Patel', destination: 'Udaipur', departureDate: '2025-10-12' },
+        ],
+        deals: [
+            { id: 'DEAL_UDAIPUR_01', title: "5-Star Oberoi, Udaipur", discount: "40% OFF", description: "Last minute deal for lake-view rooms.", img: `https://placehold.co/600x400/4338CA/FFFFFF?text=Oberoi`, type: 'Flash Sale', expiration: new Date().getTime() + 2 * 60 * 60 * 1000, packageId: 'PKG_MANALI_01' },
+            { id: 'DEAL_KERALA_01', title: "Kerala Backwaters Houseboat", discount: "25% OFF", description: "Exclusive monsoon package.", img: `https://placehold.co/600x400/10B981/FFFFFF?text=Kerala`, type: 'Exclusive', packageId: 'PKG_MANALI_01'},
+        ],
+        bookings: [
+            { id: 'BK101', client: "Sharma Family", destination: "Goa", status: "Inquiry", value: 120000, invoice: null, travelDate: '2025-11-20', travelers: 4, assignedTo: null },
+            { id: 'BK102', client: "Gupta Group", destination: "Kerala", status: "Quoted", value: 250000, invoice: null, travelers: 12, assignedTo: 'Packages Team' },
+            { id: 'BK103', client: "Mr. Patel", destination: "Udaipur", status: "Confirmed", value: 85000, invoice: null, travelDate: '2025-10-12', travelers: 2, assignedTo: 'Operations Team' },
+            { id: 'BK104', client: "Jain Corporation", destination: "Delhi-Agra", status: "In-Progress", value: 450000, invoice: { id: 'INV-002', status: 'Due', amount: 450000, paid: 200000 }, travelDate: '2025-10-10', travelers: 20, assignedTo: 'Operations Team' },
+            { id: 'BK105', client: "Mehta Couple", destination: "Andaman", status: "Completed", value: 180000, invoice: { id: 'INV-003', status: 'Paid', amount: 180000, paid: 180000 }, travelDate: '2025-09-15', travelers: 2, assignedTo: 'Operations Team' },
+            { id: 'BK106', client: "Verma Partners", destination: "Manali", status: "Completed", value: 95000, packageId: 'PKG_MANALI_01', invoice: { id: 'INV-004', status: 'Overdue', amount: 95000, paid: 0 }, travelDate: '2025-09-01', travelers: 2, assignedTo: 'Packages Team' },
+        ],
+        searchResults: [
+            { id: 'PKG_GOA_01', type: 'Package', title: "Goa Family Fun Package", price: 115000, rating: 4.9, details: "Includes 4-star hotel, flights, and activities.", img: `https://placehold.co/600x400/4338CA/FFFFFF?text=Goa+Package` },
+            { 
+                id: 'PKG_MANALI_01', type: 'Package', title: "Himalayan Escape Package", price: 95000, rating: 4.8, details: "7-day trip to Manali with stay and tours.", img: `https://placehold.co/600x400/4338CA/FFFFFF?text=Manali`,
+                baseCost: 75000,
+                dayWisePlan: [
+                    { day: 1, title: "Arrival in Manali & Leisure", activities: ["Transfer to hotel", "Acclimatize to the altitude", "Evening at Mall Road"], hotelId: 'HOTEL_MANALI_01' },
+                    { day: 2, title: "Solang Valley Excursion", activities: ["Visit Solang Valley", "Adventure activities", "Return to Manali"], hotelId: 'HOTEL_MANALI_01' },
+                    { day: 3, title: "Local Sightseeing", activities: ["Visit Hadimba Temple", "Manu Temple", "Vashisht Hot Springs"], hotelId: 'HOTEL_MANALI_01' },
+                ]
+            },
+        ],
+        hotels: [
+            { id: 'HOTEL_MANALI_01', name: "The Himalayan Resort", destination: "Manali", rating: 4.8, price: 12000, img: 'https://placehold.co/128x128/4338CA/FFFFFF?text=Himalayan' },
+            { id: 'HOTEL_MANALI_02', name: "Snow Valley Resorts", destination: "Manali", rating: 4.5, price: 9000, img: 'https://placehold.co/128x128/10B981/FFFFFF?text=Snow+Valley' },
+        ],
+        flights: [ { id: 'FL_BOMGOA_01', from: "Mumbai", to: "Goa", airline: "IndiGo", flightNo: "6E 204", departure: "08:30", arrival: "09:45", duration: "1h 15m", price: 4500, img: 'https://placehold.co/40x40/4338CA/FFFFFF?text=IG' }, ],
+        crisis: {
+            bookingId: 'BK104', client: "Jain Corporation", issue: "Flight to Agra Cancelled (Weather)", impact: "12 passengers stranded in Delhi.",
+            alternatives: [ { type: 'Flight', details: "SpiceJet SG 8169, Departs in 3 hours", cost: "+₹15,000" }, { type: 'Train', details: "Gatimaan Express, Departs tomorrow 8 AM", cost: "-₹5,000" }, ]
+        },
+        suppliers: [
+            { id: 'SUP_01', name: "Jaipur Royal Cabs", rating: 4.9, reviews: 152, trustScore: 98, service: "Transport", verified: true, analytics: { reliability: 98, value: 95, partnership: 97 }, peerReviews: [{by: 'Goa Travels', rating: 5, comment: 'Always on time, clean cars. Highly recommended.'}, {by: 'Himalayan Tours', rating: 4, comment: 'Good service, but prices are a bit high during peak season.'}] },
+            { id: 'SUP_02', name: "Goa Paradise Hotels", rating: 4.7, reviews: 210, trustScore: 92, service: "Accommodation", verified: true, analytics: { reliability: 95, value: 92, partnership: 90 }, peerReviews: [{by: 'Mumbai Voyager', rating: 5, comment: 'Excellent properties and very supportive staff.'}] },
+        ],
+        clients: [
+            { id: 'C_01', name: "Sharma Family", totalBookings: 5, totalSpend: 875000, lastTrip: "Goa", communication: [{date: '2025-09-01', log: 'Sent quote for Manali trip.'}, {date: '2025-08-28', log: 'Inquiry call for winter vacation.'}] },
+            { id: 'C_02', name: "Jain Corporation", totalBookings: 12, totalSpend: 4520000, lastTrip: "Corporate Retreat", communication: [{date: '2025-09-05', log: 'Confirmed booking for Agra offsite.'}] },
+        ],
+        analyticsData: {
+            revenue: [18, 22, 25, 23, 28, 32], revenueLabels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep"],
+            bookingsByDest: [45, 30, 15, 10], bookingsByDestLabels: ["Goa", "Manali", "Kerala", "Udaipur"],
+            pricingAnalysis: { 'PKG_MANALI_01': { baseCost: 75000, marketAvg: 98000, recommended: 96500 } }
+        },
+        liveTripData: {
+            'BK103': { news: [], weather: { temp: '28°C', condition: 'Sunny' }, alerts: [], checklist: [] },
+            'BK104': { news: [], weather: { temp: '32°C', condition: 'Clear Skies' }, alerts: [], checklist: [] },
+            'BK106': { news: [], weather: { temp: '3°C', condition: 'Partly Cloudy' }, alerts: [], checklist: [] }
+        },
+        aiRecommendations: { "Manali": [ { id: 'REC_01', title: 'Local Himachali Food Tour', details: 'Experience authentic local cuisine.', price: 5000 }, { id: 'REC_02', title: 'Adventure Sports Pass', details: 'Includes paragliding and river rafting.', price: 8000 }, ] }
+    };
+    
+    // ========================================================================
+    // ========================= APP LOGIC ====================================
+    // ========================================================================
+
+    const app = {
+        // Elements
+        loginPage: null, mainPage: null, loginButton: null, mainContent: null, 
+        headerTitle: null, crisisAlertIcon: null, modalContainer: null, 
+        toastContainer: null, profileButton: null, backButton: null, 
+        breadcrumbContainer: null, mainHeader: null, bottomNavLinks: null,
+        fab: null, fabActions: null,
+        charts: {},
+
+        // State
+        currentView: 'dashboard',
+        searchTab: 'Packages',
+        bookingStatusTab: 'In-Progress',
+        clientsTab: 'Active',
+        teamHubTab: 'Performance',
+        navigationContext: {},
+        navigationHistory: [],
+        currentItinerary: null,
+        newBookingState: { step: 1, data: {} },
+        pageTitles: {
+            dashboard: "Dashboard", bookings: "Bookings", search: "Search",
+            marketplace: "Deals Marketplace", more: "More",
+            trust_hub: "Trust Hub", clients: "Clients", finance: "Finance", 
+            analytics: "Analytics", profile: "My Profile", walkthrough: "How to Use",
+            team_hub: "Team Hub", staff_details: "Staff Performance",
+            supplier_details: "Supplier Details", client_details: "Client Details", 
+            trip_dashboard: "Live Trip Dashboard", booking_details: "Booking Details",
+            search_results: "Search Results", itinerary_builder: "Itinerary Builder",
+            custom_itinerary_builder: "Custom Itinerary",
+            crisis: "Crisis Management"
+        },
+        
+        init() {
+            this.loginPage = document.getElementById('page-login');
+            this.mainPage = document.getElementById('page-main');
+            this.loginButton = document.getElementById('login-button');
+            this.mainContent = document.getElementById('main-content');
+            this.headerTitle = document.getElementById('header-title');
+            this.crisisAlertIcon = document.getElementById('crisis-alert-icon');
+            this.modalContainer = document.getElementById('modal-container');
+            this.toastContainer = document.getElementById('toast-container');
+            this.profileButton = document.getElementById('profile-button');
+            this.backButton = document.getElementById('back-button');
+            this.breadcrumbContainer = document.getElementById('breadcrumb-container');
+            this.mainHeader = document.getElementById('main-header');
+            this.bottomNavLinks = document.querySelectorAll('.bottom-nav-link');
+            this.fab = document.getElementById('fab');
+            this.fabActions = document.getElementById('fab-actions');
+            
+            this.loginButton.addEventListener('click', () => this.login());
+            this.backButton.addEventListener('click', () => this.goBack());
+            this.bottomNavLinks.forEach(link => link.addEventListener('click', (e) => this.navigate(e.currentTarget.dataset.view)));
+            this.crisisAlertIcon.addEventListener('click', () => this.navigate('crisis'));
+            this.profileButton.addEventListener('click', () => this.navigate('profile'));
+            this.fab.addEventListener('click', () => this.toggleFab());
+
+            document.body.addEventListener('click', (e) => {
+                this.handleMainContentClick(e);
+                this.handleModalClick(e);
+                this.handleHeaderClick(e);
+            });
+            this.mainContent.addEventListener('input', (e) => this.handleMainContentInput(e));
+            
+            this.initSwipeActions();
+            
+            setInterval(() => {
+                document.querySelectorAll('.countdown-timer').forEach(timer => {
+                    const expiration = parseInt(timer.dataset.expiration, 10);
+                    const now = new Date().getTime();
+                    const distance = expiration - now;
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                    timer.textContent = `Ends in: ${hours}h ${minutes}m ${seconds}s`;
+                    if (distance < 0) timer.textContent = "EXPIRED";
+                });
+            }, 1000);
+
+            setTimeout(() => this.crisisAlertIcon.classList.remove('hide'), 5000);
+        },
+
+        handleHeaderClick(e) {
+            const target = e.target.closest('[data-action="jumpTo"]');
+            if (target) this.jumpTo(target.dataset.index);
+        },
+
+        handleMainContentClick(e) {
+            const target = e.target.closest('[data-action]');
+            if (!target) return;
+
+            const params = { ...target.dataset };
+            
+            if (params.action === 'toggleAccordion') {
+                const content = target.nextElementSibling;
+                const icon = target.querySelector('i.ph-caret-down');
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                    if (icon) icon.classList.remove('rotate-180');
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    if (icon) icon.classList.add('rotate-180');
+                }
+                return;
+            }
+
+            switch (params.action) {
+                case 'navigate': if (params.view) this.navigate(params.view, params); break;
+                case 'buildItinerary': this.showClientSelectionForItinerary(params.packageId); break;
+                case 'buildQuoteFromInquiry': this.navigate('search', { fromInquiry: true, bookingId: params.bookingId }); break;
+                case 'createCustomItinerary': this.createCustomItinerary(params.bookingId); break;
+                case 'addItineraryAddon': this.addItineraryAddon(params.addonId); break;
+                case 'showHotelOptions': this.showHotelOptions(parseInt(params.dayIndex, 10)); break;
+                case 'performSearch': this.performSearch(); break;
+                case 'generateQuote': this.generateQuote(); break;
+                case 'generateInvoice': this.generateInvoice(params.bookingId); break;
+                case 'logPayment': this.showLogPaymentModal(params.bookingId); break;
+                case 'submitReview': this.submitReview(params.supplierId); break;
+                case 'generateChecklist': this.generateChecklist(params.bookingId); break;
+                case 'changeSearchTab': this.searchTab = params.tab; this.render(); break;
+                case 'changeBookingStatusTab': this.bookingStatusTab = params.status; this.render(); break;
+                case 'changeClientsTab': this.clientsTab = params.tab; this.render(); break;
+                case 'changeTeamHubTab': this.teamHubTab = params.tab; this.render(); break;
+                case 'setReminder': this.showToast(`Reminder set for ${params.clientName}`); break;
+                case 'logout': window.location.reload(); break;
+                case 'showLeaderboard': this.showLeaderboardModal(); break;
+                case 'newBooking': this.showNewBookingModal(); this.toggleFab(false); break;
+                case 'newItinerary': this.showClientSelectionForItinerary(null); this.toggleFab(false); break;
+                case 'optimizeItinerary': this.optimizeItinerary(); break;
+                case 'draftCrisisUpdate': this.draftCrisisUpdate(); break;
+                case 'askLocalExpert': this.askLocalExpert(); break;
+                case 'showAssignModal': this.showAssignModal(params.bookingId); break;
+                case 'addNewStaff': this.showAddStaffModal(); break;
+                case 'showEditBookingModal': this.showEditBookingModal(params.bookingId); break;
+                case 'addDayToCustomItinerary': this.addDayToCustomItinerary(); break;
+                case 'searchHotels': this.navigate('search', { fromCustomItinerary: true, searchType: 'Hotels' }); break;
+                case 'searchFlights': this.navigate('search', { fromCustomItinerary: true, searchType: 'Flights' }); break;
+                case 'addTransport': this.showToast("Adding Transport component..."); break;
+                case 'addActivity': this.showToast("Adding Activity component..."); break;
+            }
+        },
+         handleMainContentInput(e) {
+            const target = e.target;
+            if (target.id === 'pricing-optimizer-slider') {
+                this.updatePricingOptimizer(target.value);
+            }
+        },
+        
+        handleModalClick(e) {
+            const target = e.target.closest('[data-action]');
+            if (!target) return;
+            const params = { ...target.dataset };
+            switch(params.action) {
+                case 'closeModal': this.closeModal(); break;
+                case 'sendQuote': this.sendQuote(); break;
+                case 'selectHotel': this.selectHotel(parseInt(params.dayIndex, 10), params.hotelId); break;
+                case 'submitPayment': this.logPayment(params.bookingId); break;
+                case 'nextBookingStep': this.handleNewBookingStep('next'); break;
+                case 'prevBookingStep': this.handleNewBookingStep('prev'); break;
+                case 'createBooking': this.createBooking(); break;
+                case 'assignToTeam': this.assignToTeam(params.bookingId, params.teamName); break;
+                case 'selectClientForItinerary': this.selectClientForItinerary(params.packageId, params.bookingId); break;
+                case 'updateBookingDetails': this.updateBookingDetails(params.bookingId); break;
+            }
+        },
+        
+        login() {
+            this.loginPage.classList.add('hide');
+            this.mainPage.classList.remove('hide');
+            this.navigate('dashboard');
+        },
+
+        navigate(view, context = {}, isBack = false) {
+            const topLevelViews = ['dashboard', 'bookings', 'search', 'marketplace', 'more'];
+            const isTopLevelNav = topLevelViews.includes(view);
+
+            if (!isBack) {
+                if (isTopLevelNav) {
+                    this.navigationHistory = [];
+                } else {
+                    this.navigationHistory.push({ view: this.currentView, context: this.navigationContext });
+                }
+            }
+            
+            this.currentView = view;
+            this.navigationContext = context;
+            
+            if(view === 'search') {
+                if(context.fromCustomItinerary) {
+                    this.searchTab = context.searchType;
+                } else if(context.fromInquiry) {
+                    this.searchTab = 'Packages';
+                }
+            }
+
+            if (view === 'itinerary_builder' && !this.currentItinerary) {
+                this.buildItinerary('PKG_MANALI_01');
+            }
+            
+            this.updateNav();
+            this.render();
+            document.getElementById('main-content').scrollTo(0, 0);
+            this.toggleFab(false);
+        },
+
+        goBack() {
+            if (this.navigationHistory.length > 0) {
+                const lastState = this.navigationHistory.pop();
+                this.navigate(lastState.view, lastState.context, true);
+            }
+        },
+
+        jumpTo(index) {
+            index = parseInt(index, 10);
+            if (index === -1) { // Dashboard link
+                this.navigationHistory = [];
+                this.navigate('dashboard', {}, true);
+            } else if (this.navigationHistory[index]) {
+                const targetState = this.navigationHistory[index];
+                this.navigationHistory = this.navigationHistory.slice(0, index);
+                this.navigate(targetState.view, targetState.context, true);
+            }
+        },
+
+        getPageTitle: (view) => app.pageTitles[view] || "Page",
+        
+        updateNav() {
+            this.headerTitle.textContent = this.getPageTitle(this.currentView);
+
+            let mainView = this.currentView;
+            if(!['dashboard', 'bookings', 'search', 'marketplace', 'more'].includes(mainView)) {
+                mainView = this.navigationHistory[0]?.view || 'dashboard';
+            }
+            
+            this.bottomNavLinks.forEach(link => link.classList.toggle('active', link.dataset.view === mainView));
+            
+            if (this.currentView === 'crisis') {
+                this.crisisAlertIcon.classList.add('hide');
+            }
+
+            this.breadcrumbContainer.innerHTML = '';
+            if (this.navigationHistory.length > 0) {
+                this.backButton.classList.remove('hide');
+                const links = [`<a href="#" class="hover:underline text-indigo-600" data-action="jumpTo" data-index="-1">Home</a>`];
+                this.navigationHistory.forEach((state, index) => {
+                    links.push(`<span class="mx-1 text-gray-400">/</span><a href="#" class="hover:underline text-indigo-600" data-action="jumpTo" data-index="${index}">${this.getPageTitle(state.view)}</a>`);
+                });
+                this.breadcrumbContainer.innerHTML = links.join('');
+                this.headerTitle.classList.add('mt-1');
+            } else {
+                this.backButton.classList.add('hide');
+                this.headerTitle.classList.remove('mt-1');
+            }
+        },
+
+        render() {
+            Object.values(this.charts).forEach(chart => chart.destroy());
+            this.charts = {};
+
+            const viewRenderer = `render_${this.currentView}`;
+            if (this.mainContent) {
+                this.mainContent.innerHTML = this[viewRenderer] ? this[viewRenderer]() : `<h1>Not Found</h1>`;
+                this.mainContent.classList.remove('animate-fade-in');
+                void this.mainContent.offsetWidth; // Trigger reflow
+                this.mainContent.classList.add('animate-fade-in');
+            }
+            
+            if (this.currentView === 'analytics') this.renderCharts();
+            if (this.currentView === 'supplier_details') this.renderSupplierPeerReviewChart();
+        },
+        
+        openModal(content) {
+            this.modalContainer.innerHTML = `<div class="modal-overlay" data-action="closeModal"></div>` + content;
+            this.modalContainer.classList.remove('hide');
+        },
+
+        closeModal() {
+            this.modalContainer.classList.add('hide');
+            this.modalContainer.innerHTML = '';
+        },
+        
+        toggleFab(force) {
+            const isOpen = this.fab.classList.contains('open');
+            if (force === false || isOpen) {
+                this.fab.classList.remove('open');
+                this.fabActions.classList.remove('open');
+            } else if(force === true || !isOpen) {
+                this.fab.classList.add('open');
+                this.fabActions.classList.add('open');
+            }
+        },
+
+        initSwipeActions() {
+            let startX = 0;
+            let currentX = 0;
+            let activeElement = null;
+
+            this.mainContent.addEventListener('touchstart', (e) => {
+                const target = e.target.closest('.swipe-content');
+                if (target) {
+                    startX = e.touches[0].clientX;
+                    activeElement = target;
+                    activeElement.style.transition = 'none';
+                }
+            });
+
+            this.mainContent.addEventListener('touchmove', (e) => {
+                if (!activeElement) return;
+                currentX = e.touches[0].clientX;
+                const diff = currentX - startX;
+                if (diff < 0 && diff > -160) {
+                    activeElement.style.transform = `translateX(${diff}px)`;
+                }
+            });
+
+            this.mainContent.addEventListener('touchend', () => {
+                if (!activeElement) return;
+                const diff = currentX - startX;
+                activeElement.style.transition = 'transform 0.3s ease';
+                if (diff < -60) {
+                    activeElement.style.transform = 'translateX(-160px)';
+                } else {
+                    activeElement.style.transform = 'translateX(0)';
+                }
+                startX = 0; currentX = 0; activeElement = null;
+            });
+        },
+        
+        showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+            toast.className = `toast text-white font-bold py-2 px-4 rounded-lg shadow-lg ${bgColor} text-sm`;
+            toast.textContent = message;
+            this.toastContainer.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        },
+
+        performSearch() {
+            let query = '';
+            let searchInput;
+
+            if (this.searchTab === 'Packages') {
+                searchInput = document.getElementById('package-search-input');
+            } else if (this.searchTab === 'Hotels') {
+                searchInput = document.getElementById('hotel-search-input');
+            } else if (this.searchTab === 'Flights') {
+                searchInput = document.getElementById('flight-search-input');
+            }
+
+            if (searchInput) {
+                query = searchInput.value;
+            }
+
+            if(this.navigationContext.fromInquiry) {
+                const results = mockData.searchResults.filter(p => query && (p.title.toLowerCase().includes(query.toLowerCase()) || p.details.toLowerCase().includes(query.toLowerCase())));
+                if(results.length > 0) {
+                    this.selectClientForItinerary(results[0].id, this.navigationContext.bookingId);
+                } else {
+                    this.showToast('No matching packages found for this inquiry.', 'error');
+                }
+            } else {
+                this.navigate('search_results', { query: query, type: this.searchTab });
+            }
+        },
+        
+        buildItinerary(packageId, bookingId = null) {
+            const packageData = mockData.searchResults.find(p => p.id === packageId);
+            if (!packageData) return;
+
+            this.currentItinerary = JSON.parse(JSON.stringify(packageData));
+            this.currentItinerary.totalPrice = this.currentItinerary.price;
+            this.currentItinerary.addons = [];
+            
+            if(bookingId && bookingId !== 'new') {
+                const booking = mockData.bookings.find(b => b.id === bookingId);
+                this.currentItinerary.clientName = booking.client;
+                this.currentItinerary.bookingId = booking.id;
+            } else {
+                this.currentItinerary.clientName = "New Client";
+            }
+            
+            this.updateItineraryProfit();
+        },
+
+        addItineraryAddon(addonId) {
+            const addon = mockData.aiRecommendations.Manali.find(rec => rec.id === addonId);
+            if (this.currentItinerary && addon && !this.currentItinerary.addons.find(a => a.id === addonId)) {
+                this.currentItinerary.addons.push(addon);
+                this.currentItinerary.totalPrice += addon.price;
+                this.updateItineraryProfit();
+                this.showToast('Add-on added to itinerary!');
+                this.render();
+            }
+        },
+
+        updateItineraryProfit() {
+            if (!this.currentItinerary) return;
+            const baseCost = this.currentItinerary.baseCost || 0;
+            const addonsCost = this.currentItinerary.addons.reduce((sum, addon) => sum + (addon.price * 0.8), 0);
+            const totalCost = baseCost + addonsCost;
+            const profit = this.currentItinerary.totalPrice - totalCost;
+            const margin = this.currentItinerary.totalPrice > 0 ? (profit / this.currentItinerary.totalPrice * 100).toFixed(1) : 0;
+            this.currentItinerary.profit = profit;
+            this.currentItinerary.margin = margin;
+        },
+
+        generateQuote() {
+            this.showToast("Quote Generated and Sent!");
+            
+            if (this.currentItinerary.bookingId) {
+                const booking = mockData.bookings.find(b => b.id === this.currentItinerary.bookingId);
+                if (booking) {
+                    booking.status = 'Quoted';
+                    booking.value = this.currentItinerary.totalPrice;
+                }
+            } else {
+                const newBooking = {
+                    id: `BK${Math.floor(Math.random() * 900) + 107}`, client: this.currentItinerary.clientName,
+                    destination: this.currentItinerary.title.replace(' Package', ''), status: 'Quoted',
+                    value: this.currentItinerary.totalPrice, invoice: null,
+                    assignedTo: 'Packages Team'
+                };
+                mockData.bookings.unshift(newBooking);
+            }
+            this.currentItinerary = null;
+            this.navigate('bookings');
+        },
+        generateInvoice(bookingId) {
+             const booking = mockData.bookings.find(b => b.id === bookingId);
+            if (booking && !booking.invoice) {
+                booking.invoice = { id: `INV-00${mockData.bookings.filter(b => b.invoice).length + 1}`, status: 'Due', amount: booking.value, paid: 0 };
+                this.showToast('Invoice generated!');
+                this.render();
+            }
+        },
+        showLogPaymentModal(bookingId) {
+            const booking = mockData.bookings.find(b => b.id === bookingId);
+            if (!booking || !booking.invoice) return;
+            const remaining = booking.invoice.amount - booking.invoice.paid;
+            const modalContent = `
+                <div class="modal-content fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
+                    <h3 class="text-lg font-bold mb-4">Log Payment for ${booking.invoice.id}</h3>
+                    <p class="text-sm">Amount Due: ₹${remaining.toLocaleString('en-IN')}</p>
+                    <input type="number" id="payment-amount" placeholder="Enter amount" class="w-full mt-2 px-4 py-2 rounded-lg border border-gray-300">
+                    <div class="mt-4 flex justify-end">
+                        <button data-action="submitPayment" data-booking-id="${bookingId}" class="text-white font-bold py-2 px-4 rounded-lg" style="background-color: var(--success-green);">Submit Payment</button>
+                    </div>
+                </div>`;
+            this.openModal(modalContent);
+        },
+        logPayment(bookingId) {
+            const booking = mockData.bookings.find(b => b.id === bookingId);
+            const amount = parseFloat(document.getElementById('payment-amount').value);
+
+            if (booking && booking.invoice && amount > 0) {
+                booking.invoice.paid += amount;
+                booking.invoice.status = booking.invoice.paid >= booking.invoice.amount ? 'Paid' : 'Due';
+                this.showToast('Payment logged!');
+                this.closeModal();
+                this.render();
+            } else {
+                this.showToast('Invalid amount.', 'error');
+            }
+        },
+        submitReview(supplierId) {
+            const comment = document.getElementById('review-comment').value;
+            if (comment) {
+                this.showToast("Thank you for your review!");
+                this.render();
+            } else {
+                this.showToast("Please write a comment.", "error");
+            }
+        },
+        generateChecklist(bookingId) {
+            const tripData = mockData.liveTripData[bookingId];
+            if(tripData) {
+                tripData.checklist = [
+                    { category: 'Documents', items: [{ text: 'Confirm flight tickets', done: true }, { text: 'Verify hotel confirmations', done: false }] },
+                    { category: 'Packing', items: [{ text: 'Pack warm clothing', done: false }] },
+                ];
+                this.showToast("AI Checklist Generated!");
+                this.render();
+            }
+        },
+        showHotelOptions(dayIndex) {
+            const modalContent = `
+                <div class="modal-content fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
+                    <h3 class="text-lg font-bold mb-4">Change Hotel for Day ${dayIndex+1}</h3>
+                    <div class="space-y-3 max-h-[50vh] overflow-y-auto">
+                        ${mockData.hotels.map(h => `<div class="border rounded-lg p-3 flex items-center"><div class="flex-1"><p class="font-semibold">${h.name}</p><p class="text-xs text-gray-500">${h.rating} ★ | ₹${h.price.toLocaleString('en-IN')}</p></div><button data-action="selectHotel" data-day-index="${dayIndex}" data-hotel-id="${h.id}" class="text-sm font-bold text-white py-2 px-4 rounded-lg bg-indigo-600">Select</button></div>`).join('')}
+                    </div>
+                </div>`;
+            this.openModal(modalContent);
+        },
+        selectHotel(dayIndex, hotelId) {
+            this.currentItinerary.dayWisePlan[dayIndex].hotelId = hotelId;
+            this.updateItineraryProfit(); // This needs to be more complex in reality
+            this.showToast('Hotel updated!');
+            this.closeModal();
+            this.render();
+        },
+        updatePricingOptimizer(value) {
+            const analysis = mockData.analyticsData.pricingAnalysis['PKG_MANALI_01'];
+            const price = parseInt(value, 10);
+            const commission = price > analysis.baseCost ? ((price - analysis.baseCost) / price * 100).toFixed(1) : 0;
+            document.getElementById('pricing-optimizer-price').textContent = `₹${price.toLocaleString('en-IN')}`;
+            document.getElementById('pricing-optimizer-commission').textContent = `${commission}% Commission`;
+        },
+
+        // ========================= NEW BOOKING & ASSIGNMENT FLOW =========================
+        showClientSelectionForItinerary(packageId) {
+            const inquiryBookings = mockData.bookings.filter(b => b.status === 'Inquiry' || b.status === 'Quoted');
+            const modalContent = `
+                 <div class="modal-content fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
+                    <h3 class="text-lg font-bold mb-4">Who is this itinerary for?</h3>
+                    <div class="space-y-2 max-h-[50vh] overflow-y-auto">
+                        <button data-action="selectClientForItinerary" data-package-id="${packageId || ''}" data-booking-id="new" class="w-full text-left p-3 bg-indigo-100 text-indigo-700 rounded-lg font-medium">A New Client</button>
+                        ${inquiryBookings.map(b => `<button data-action="selectClientForItinerary" data-package-id="${packageId || ''}" data-booking-id="${b.id}" class="w-full text-left p-3 bg-gray-100 rounded-lg font-medium">${b.client} - ${b.destination}</button>`).join('')}
+                    </div>
+                </div>
+            `;
+            this.openModal(modalContent);
+        },
+        selectClientForItinerary(packageId, bookingId) {
+            this.closeModal();
+            if (packageId) {
+                this.buildItinerary(packageId, bookingId);
+                this.navigate('itinerary_builder');
+            } else {
+                this.createCustomItinerary(bookingId);
+            }
+        },
+        showNewBookingModal() {
+            this.newBookingState = { step: 1, data: {} };
+            this.renderNewBookingStep();
+        },
+        renderNewBookingStep() {
+            let content = '';
+            switch(this.newBookingState.step) {
+                case 1: // Client Details
+                    content = `
+                        <h3 class="text-lg font-bold mb-4">Step 1: Client Details</h3>
+                        <div class="space-y-3">
+                            <div><label class="text-sm font-medium">Client Name</label><input type="text" id="nb-client-name" class="w-full mt-1 p-2 border rounded-lg" placeholder="e.g., Anjali Sharma"></div>
+                            <div><label class="text-sm font-medium">Contact Number</label><input type="tel" id="nb-client-phone" class="w-full mt-1 p-2 border rounded-lg" placeholder="e.g., 9876543210"></div>
+                        </div>
+                    `;
+                    break;
+                case 2: // Trip Details
+                    content = `
+                        <h3 class="text-lg font-bold mb-4">Step 2: Trip Details</h3>
+                        <div class="space-y-3">
+                            <div><label class="text-sm font-medium">Destination</label><input type="text" id="nb-destination" class="w-full mt-1 p-2 border rounded-lg" placeholder="e.g., Kerala"></div>
+                            <div><label class="text-sm font-medium">Travel Date</label><input type="date" id="nb-travel-date" class="w-full mt-1 p-2 border rounded-lg text-gray-500"></div>
+                            <div><label class="text-sm font-medium">Number of Travelers</label><input type="number" id="nb-travelers" class="w-full mt-1 p-2 border rounded-lg" placeholder="e.g., 4"></div>
+                        </div>
+                    `;
+                    break;
+                case 3: // Summary
+                     content = `
+                        <h3 class="text-lg font-bold mb-4">Step 3: Review & Confirm</h3>
+                        <div class="space-y-2 text-sm border p-3 rounded-lg">
+                            <p><strong>Client:</strong> ${this.newBookingState.data.clientName}</p>
+                            <p><strong>Destination:</strong> ${this.newBookingState.data.destination}</p>
+                            <p><strong>Date:</strong> ${new Date(this.newBookingState.data.travelDate).toLocaleDateString('en-IN', {day:'numeric', month:'long', year:'numeric'})}</p>
+                            <p><strong>Travelers:</strong> ${this.newBookingState.data.travelers}</p>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">This will create a new entry in your "Inquiry" pipeline.</p>
+                    `;
+                    break;
+            }
+
+            const modalHTML = `
+                <div class="modal-content fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
+                    ${content}
+                    <div class="mt-6 flex justify-between">
+                        <button data-action="prevBookingStep" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg ${this.newBookingState.step === 1 ? 'invisible' : ''}">Back</button>
+                        ${this.newBookingState.step < 3 
+                            ? `<button data-action="nextBookingStep" class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg">Next</button>`
+                            : `<button data-action="createBooking" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg">Create Inquiry</button>`
+                        }
+                    </div>
+                </div>
+            `;
+            this.openModal(modalHTML);
+        },
+        handleNewBookingStep(direction) {
+            // Save data from current step
+            if (this.newBookingState.step === 1) {
+                this.newBookingState.data.clientName = document.getElementById('nb-client-name').value;
+                this.newBookingState.data.clientPhone = document.getElementById('nb-client-phone').value;
+            } else if (this.newBookingState.step === 2) {
+                this.newBookingState.data.destination = document.getElementById('nb-destination').value;
+                this.newBookingState.data.travelDate = document.getElementById('nb-travel-date').value;
+                this.newBookingState.data.travelers = document.getElementById('nb-travelers').value;
+            }
+
+            if (direction === 'next') this.newBookingState.step++;
+            if (direction === 'prev') this.newBookingState.step--;
+            
+            this.renderNewBookingStep();
+        },
+        createBooking() {
+            const data = this.newBookingState.data;
+            if(!data.clientName || !data.destination || !data.travelDate) {
+                this.showToast("Please fill all details.", "error");
+                return;
+            }
+            const newBooking = {
+                id: `BK${Math.floor(Math.random() * 900) + 107}`,
+                client: data.clientName,
+                destination: data.destination,
+                status: 'Inquiry',
+                value: 0, 
+                invoice: null,
+                travelDate: data.travelDate,
+                assignedTo: null,
+                travelers: data.travelers
+            };
+            mockData.bookings.unshift(newBooking);
+            this.closeModal();
+            this.showToast('New inquiry created successfully!');
+            this.navigate('bookings');
+        },
+        showAssignModal(bookingId) {
+            const modalContent = `
+                <div class="modal-content fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
+                    <h3 class="text-lg font-bold mb-4">Assign to Team</h3>
+                    <div class="space-y-2">
+                        ${mockData.teams.map(team => `<button data-action="assignToTeam" data-booking-id="${bookingId}" data-team-name="${team}" class="w-full text-left p-3 bg-gray-100 rounded-lg font-medium">${team}</button>`).join('')}
+                    </div>
+                </div>`;
+            this.openModal(modalContent);
+        },
+        assignToTeam(bookingId, teamName) {
+            const booking = mockData.bookings.find(b => b.id === bookingId);
+            if (booking) {
+                booking.assignedTo = teamName;
+                this.closeModal();
+                this.render();
+                this.showToast(`Assigned to ${teamName}`);
+            }
+        },
+        showEditBookingModal(bookingId) {
+            const booking = mockData.bookings.find(b => b.id === bookingId);
+            const modalContent = `
+                <div class="modal-content fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
+                    <h3 class="text-lg font-bold mb-4">Edit Trip Details</h3>
+                    <div class="space-y-3">
+                        <div><label class="text-sm font-medium">Destination</label><input type="text" id="edit-destination" class="w-full mt-1 p-2 border rounded-lg" value="${booking.destination}"></div>
+                        <div><label class="text-sm font-medium">Travel Date</label><input type="date" id="edit-travel-date" class="w-full mt-1 p-2 border rounded-lg text-gray-500" value="${booking.travelDate}"></div>
+                        <div><label class="text-sm font-medium">Number of Travelers</label><input type="number" id="edit-travelers" class="w-full mt-1 p-2 border rounded-lg" value="${booking.travelers}"></div>
+                    </div>
+                    <div class="mt-6 flex justify-end">
+                        <button data-action="updateBookingDetails" data-booking-id="${bookingId}" class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg">Save Changes</button>
+                    </div>
+                </div>
+            `;
+            this.openModal(modalContent);
+        },
+        updateBookingDetails(bookingId) {
+            const booking = mockData.bookings.find(b => b.id === bookingId);
+            if(booking) {
+                booking.destination = document.getElementById('edit-destination').value;
+                booking.travelDate = document.getElementById('edit-travel-date').value;
+                booking.travelers = document.getElementById('edit-travelers').value;
+                this.closeModal();
+                this.render();
+                this.showToast("Booking details updated!");
+            }
+        },
+        createCustomItinerary(bookingId) {
+            let clientName = "New Client";
+            let destination = "New Destination";
+
+            if (bookingId && bookingId !== 'new') {
+                const booking = mockData.bookings.find(b => b.id === bookingId);
+                if (booking) {
+                    clientName = booking.client;
+                    destination = booking.destination;
+                }
+            }
+
+            this.currentItinerary = {
+                title: `Custom Trip to ${destination}`,
+                clientName: clientName,
+                bookingId: (bookingId === 'new') ? null : bookingId,
+                dayWisePlan: [{ day: 1, title: "Arrival & Check-in", activities: [], hotelId: null }],
+                price: 0, baseCost: 0, addons: [], profit: 0, margin: 0
+            };
+            this.navigate('custom_itinerary_builder');
+        },
+        addDayToCustomItinerary() {
+            if (!this.currentItinerary) return;
+            const newDay = this.currentItinerary.dayWisePlan.length + 1;
+            this.currentItinerary.dayWisePlan.push({
+                day: newDay,
+                title: `Day ${newDay} Activities`,
+                activities: [],
+                hotelId: null
+            });
+            this.render();
+        },
+
+        // ========================= GEMINI API FEATURES =========================
+
+        async callGeminiAPI(systemPrompt, userPrompt, useGrounding = false, isJson = false) {
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            
+            const payload = {
+                contents: [{ parts: [{ text: userPrompt }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+            };
+
+            if (useGrounding) {
+                payload.tools = [{ "google_search": {} }];
+            }
+            if (isJson) {
+                payload.generationConfig = { responseMimeType: "application/json" };
+            }
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API call failed with status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (text) {
+                    return text;
+                } else {
+                    throw new Error("Invalid response structure from API.");
+                }
+            } catch (error) {
+                console.error("Gemini API call failed:", error);
+                this.showToast("AI feature failed. Please try again.", "error");
+                return null;
+            }
+        },
+
+        async optimizeItinerary() {
+            if (!this.currentItinerary) return;
+
+            const button = document.getElementById('optimize-itinerary-btn');
+            button.disabled = true;
+            button.innerHTML = `<i class="ph-spinner spinner text-xl"></i> Optimizing...`;
+
+            const systemPrompt = "You are a world-class travel agent specializing in Indian domestic tourism. Given a day-wise travel plan, enhance it by suggesting more engaging activities, logistical improvements, and culturally relevant experiences. Re-write the plan to be more appealing and efficient. Ensure you maintain the original number of days and the core destination. Format your response as a JSON object that matches this structure: { \"plan\": [{\"day\": 1, \"title\": \"New Title\", \"activities\": [\"Activity 1\", \"Activity 2\"], \"hotelId\": \"HOTEL_ID\"}] }";
+            const userPrompt = `Optimize this itinerary: ${JSON.stringify(this.currentItinerary.dayWisePlan)}`;
+
+            const result = await this.callGeminiAPI(systemPrompt, userPrompt, false, true);
+            
+            if (result) {
+                try {
+                    const optimizedData = JSON.parse(result);
+                    if (optimizedData.plan && Array.isArray(optimizedData.plan)) {
+                        this.currentItinerary.dayWisePlan = optimizedData.plan;
+                        this.showToast("✨ Itinerary optimized by AI!");
+                        this.render();
+                    }
+                } catch (e) {
+                    this.showToast("Could not apply AI optimization.", "error");
+                }
+            }
+            button.disabled = false;
+            button.innerHTML = `✨ Optimize with AI`;
+        },
+
+        async draftCrisisUpdate() {
+            const textarea = document.getElementById('crisis-communication-textarea');
+            const button = document.getElementById('draft-crisis-update-btn');
+            textarea.placeholder = "✨ Generating AI draft...";
+            button.disabled = true;
+
+            const systemPrompt = "You are a professional and empathetic communications manager for a travel agency. Your task is to draft a concise, clear, and reassuring message to be sent to a client and suppliers during a travel disruption. Be professional, state the problem clearly, and explain the proposed solution.";
+            const userPrompt = `A flight for the ${mockData.crisis.client}'s trip to Agra was cancelled due to weather. ${mockData.crisis.impact} We are rebooking them on ${mockData.crisis.alternatives[0].details}. Draft a bulk update message for the client and relevant suppliers.`;
+
+            const result = await this.callGeminiAPI(systemPrompt, userPrompt);
+            if (result) {
+                textarea.value = result;
+            } else {
+                 textarea.placeholder = "Type message to client, suppliers, etc...";
+            }
+            button.disabled = false;
+        },
+
+        async askLocalExpert() {
+            const input = document.getElementById('local-expert-input');
+            const button = document.getElementById('ask-expert-btn');
+            const answerContainer = document.getElementById('local-expert-answer');
+            if (!input.value) return;
+
+            const question = input.value;
+            input.value = "";
+            answerContainer.innerHTML = `<div class="flex items-center text-sm text-gray-500"><i class="ph-spinner spinner mr-2"></i>Asking local expert...</div>`;
+            button.disabled = true;
+
+            const systemPrompt = "You are a local travel expert for the given city in India. Provide concise, helpful, and up-to-date answers to a tourist's questions. Use bullet points for lists and keep the tone friendly.";
+            const userPrompt = `I am in ${this.navigationContext.destination}. ${question}`;
+
+            const result = await this.callGeminiAPI(systemPrompt, userPrompt, true);
+            if (result) {
+                answerContainer.innerHTML = `<div class="text-sm p-3 bg-indigo-50 rounded-lg">${result.replace(/\*/g, '<br>• ')}</div>`;
+            } else {
+                answerContainer.innerHTML = "";
+            }
+            button.disabled = false;
+        },
+        showAddStaffModal() {
+            this.showToast("Add Staff Member flow initiated.");
+        },
+
+        // ========================= VIEW RENDERERS =========================
+
+        render_dashboard() {
+            return `
+                <div id="dashboard-container" class="space-y-6">
+                    <div id="kpi-grid" class="grid grid-cols-2 gap-4">
+                        ${mockData.kpis.map(kpi => `
+                            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200/80">
+                                <p class="text-xs" style="color: var(--neutral-text-light);">${kpi.label}</p>
+                                <p class="text-2xl font-bold mt-1" style="color: var(--neutral-text-dark);">${kpi.value}</p>
+                                <p class="text-xs font-semibold mt-1" style="color: ${kpi.change.startsWith('+') ? 'var(--success-green)' : 'var(--danger-red)'};">${kpi.change}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div id="smart-assistant-feed">
+                        <h2 class="text-lg font-semibold mb-3" style="color: var(--neutral-text-dark);">For You</h2>
+                        <div class="space-y-3">
+                            ${mockData.smartFeed.map(item => {
+                                const colors = {
+                                    opportunity: { border: 'border-indigo-400', icon: 'text-indigo-600' },
+                                    engagement: { border: 'border-green-400', icon: 'text-green-600' },
+                                    alert: { border: 'border-amber-400', icon: 'text-amber-600' }
+                                };
+                                const color = colors[item.type] || colors.opportunity;
+                                return `
+                                <div class="bg-white p-4 rounded-lg border-l-4 ${color.border} shadow-sm">
+                                    <div class="flex items-start">
+                                        <i class="ph ${item.icon} text-2xl ${color.icon} mr-3 mt-1"></i>
+                                        <div>
+                                            <h3 class="font-bold text-sm text-gray-800">${item.title}</h3>
+                                            <p class="text-sm text-gray-600 mt-1">${item.text}</p>
+                                            <button data-action="${item.action}" data-view="${item.view}" ${item.clientId ? `data-client-id="${item.clientId}"` : ''} ${item.supplierId ? `data-supplier-id="${item.supplierId}"` : ''} class="mt-3 text-sm font-bold" style="color: var(--primary-indigo);">${item.actionText} <i class="ph-arrow-right"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                `
+                            }).join('')}
+                        </div>
+                    </div>
+                     <div id="upcoming-departures" class="bg-white p-4 rounded-xl shadow-sm border border-gray-200/80">
+                        <h2 class="text-lg font-semibold mb-3" style="color: var(--neutral-text-dark);">Upcoming Departures</h2>
+                        <div class="space-y-3">
+                            ${mockData.upcomingDepartures.map(d => `
+                                <div data-action="navigate" data-view="trip_dashboard" data-booking-id="${d.bookingId}" data-destination="${d.destination}" class="border border-gray-200/80 rounded-lg p-3 flex items-center justify-between cursor-pointer active:bg-gray-100">
+                                    <div>
+                                        <p class="font-semibold text-sm">${d.client}</p>
+                                        <p class="text-xs text-gray-500">${d.destination}</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-bold text-sm text-indigo-600">${new Date(d.departureDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</p>
+                                        <p class="text-xs text-gray-500">in ${Math.round((new Date(d.departureDate) - new Date('2025-10-08')) / 864e5)} days</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>`; 
+        },
+
+        render_bookings() { 
+            const statuses = ["In-Progress", "Confirmed", "Quoted", "Inquiry", "Completed"];
+            const bookingsForStatus = mockData.bookings.filter(b => b.status === this.bookingStatusTab);
+
+            return `
+                <div id="kanban-board-mobile" class="flex flex-col h-full">
+                    <div class="flex items-center space-x-2 overflow-x-auto pb-3 -mx-4 px-4">
+                        ${statuses.map(status => `
+                            <button data-action="changeBookingStatusTab" data-status="${status}" class="booking-tab whitespace-nowrap text-sm font-medium py-2 px-4 rounded-full ${this.bookingStatusTab === status ? 'active' : 'bg-white text-gray-600'}">
+                                ${status} <span class="text-xs opacity-80">${mockData.bookings.filter(b=>b.status===status).length}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div class="space-y-3 mt-4">
+                        ${bookingsForStatus.length > 0 ? bookingsForStatus.map(booking => `
+                            <div class="swipe-container rounded-lg bg-white shadow-sm border">
+                                <div class="swipe-actions">
+                                    <div data-action="logPayment" data-booking-id="${booking.id}" class="swipe-action-button bg-green-500"><i class="ph-currency-inr text-2xl"></i><span class="text-xs mt-1">Pay</span></div>
+                                    <div data-action="navigate" data-view="client_details" data-client-id="${mockData.clients.find(c => c.name === booking.client)?.id || ''}" class="swipe-action-button bg-blue-500"><i class="ph-phone text-2xl"></i><span class="text-xs mt-1">Call</span></div>
+                                </div>
+                                <div data-action="navigate" data-view="booking_details" data-booking-id="${booking.id}" class="swipe-content bg-white p-4 rounded-lg cursor-pointer">
+                                    <p class="font-semibold" style="color: var(--neutral-text-dark);">${booking.client}</p>
+                                    <p class="text-sm" style="color: var(--neutral-text-light);">${booking.destination}</p>
+                                    <p class="text-sm font-bold mt-2" style="color: var(--success-green);">₹${booking.value.toLocaleString('en-IN')}</p>
+                                </div>
+                            </div>
+                        `).join('') : `<div class="text-center text-sm text-gray-400 pt-10">No bookings in this stage.</div>`}
+                    </div>
+                </div>`;
+        },
+        
+        render_more() {
+            const moreLinks = [
+                { view: 'team_hub', icon: 'ph-users-three', title: 'Team Hub' },
+                { view: 'trust_hub', icon: 'ph-handshake', title: 'Trust Hub' },
+                { view: 'clients', icon: 'ph-users', title: 'Clients' },
+                { view: 'finance', icon: 'ph-currency-inr', title: 'Finance' },
+                { view: 'analytics', icon: 'ph-chart-bar', title: 'Analytics' },
+                { view: 'profile', icon: 'ph-user-circle', title: 'My Profile' },
+                { view: 'walkthrough', icon: 'ph-info', title: 'How to Use' },
+            ];
+             return `
+                <div class="bg-white rounded-xl shadow-sm border divide-y">
+                     ${moreLinks.map(link => `
+                        <div data-action="navigate" data-view="${link.view}" class="flex items-center p-4 cursor-pointer active:bg-gray-100">
+                            <i class="ph ${link.icon} text-xl text-gray-500"></i>
+                            <span class="ml-4 font-medium">${link.title}</span>
+                             <i class="ph-caret-right text-gray-400 ml-auto"></i>
+                        </div>
+                    `).join('')}
+                </div>
+                <div data-action="logout" class="bg-white rounded-xl shadow-sm border mt-6 flex items-center p-4 cursor-pointer active:bg-red-50 text-red-600">
+                    <i class="ph-sign-out text-xl"></i>
+                    <span class="ml-4 font-medium">Logout</span>
+                </div>
+            `;
+        },
+
+        render_trust_hub() {
+            const { user } = mockData;
+            return `
+                <div class="space-y-6">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-semibold mb-3">Your Community Rank</h3>
+                        <div class="flex items-center justify-between">
+                            <div class="text-center">
+                                <p class="text-3xl font-bold text-indigo-600">#${user.rank}</p>
+                                <p class="text-xs text-gray-500">Overall</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-3xl font-bold text-amber-500">${user.points}</p>
+                                <p class="text-xs text-gray-500">Points</p>
+                            </div>
+                            <button data-action="showLeaderboard" class="bg-gray-100 text-gray-700 font-bold py-2 px-4 rounded-lg text-sm">Leaderboard</button>
+                        </div>
+                         <div class="mt-4 flex items-center space-x-2">
+                             ${user.badges.map(badge => `<span class="text-xs font-semibold bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">${badge}</span>`).join('')}
+                         </div>
+                    </div>
+
+                    <div id="supplier-list" class="bg-white p-4 rounded-xl shadow-sm border">
+                         <h2 class="text-lg font-semibold mb-3">Supplier Directory</h2>
+                         <div class="space-y-3">
+                            ${mockData.suppliers.map(s => `
+                                <div data-action="navigate" data-view="supplier_details" data-supplier-id="${s.id}" class="border rounded-lg p-3 flex items-center cursor-pointer active:bg-gray-50">
+                                    <div class="flex-1">
+                                        <p class="font-semibold text-sm">${s.name} ${s.verified ? '<i class="ph-seal-check-fill text-blue-500"></i>' : ''}</p>
+                                        <p class="text-xs" style="color: var(--neutral-text-light);">${s.service}</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-bold text-lg" style="color: var(--primary-indigo);">${s.trustScore}<span class="text-xs text-gray-400">/100</span></p>
+                                        <p class="text-xs" style="color: var(--neutral-text-light);">${s.reviews} reviews</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        },
+
+        render_supplier_details() {
+            const { supplierId } = this.navigationContext;
+            const supplier = mockData.suppliers.find(s => s.id === supplierId);
+            const wordCloudData = supplier.peerReviews.flatMap(r => r.comment.split(' ')).reduce((acc, word) => {
+                const cleanWord = word.toLowerCase().replace(/[.,]/g, '');
+                if (cleanWord.length > 3) acc[cleanWord] = (acc[cleanWord] || 0) + 1;
+                return acc;
+            }, {});
+            
+            return `
+                <div class="space-y-6">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h2 class="text-xl font-bold">${supplier.name} ${supplier.verified ? '<i class="ph-seal-check-fill text-blue-500"></i>' : ''}</h2>
+                        <p class="text-sm text-gray-500">${supplier.service}</p>
+                        <div class="flex justify-between items-center mt-3">
+                            <div><p class="font-bold text-3xl text-amber-500">${supplier.rating}</p><p class="text-xs text-gray-500">Avg. Rating</p></div>
+                            <div><p class="font-bold text-3xl text-indigo-600">${supplier.trustScore}</p><p class="text-xs text-gray-500">Trust Score</p></div>
+                        </div>
+                    </div>
+                    
+                     <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-bold mb-3">Peer Review Insights</h3>
+                        <canvas id="supplier-peer-review-chart" height="150"></canvas>
+                        <div class="mt-4">
+                            <p class="text-xs font-semibold text-gray-500 mb-2">COMMON FEEDBACK</p>
+                            <div class="flex flex-wrap gap-2">
+                                ${Object.entries(wordCloudData).sort((a,b) => b[1] - a[1]).slice(0,5).map(([word, count]) => `
+                                    <span class="text-xs font-medium bg-gray-100 text-gray-700 px-2 py-1 rounded-md">${word} (${count})</span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                         <h3 class="text-lg font-bold mb-3">Leave a Review</h3>
+                         <textarea id="review-comment" placeholder="Share your experience..." class="w-full p-2 border border-gray-300 rounded-lg h-24"></textarea>
+                         <button data-action="submitReview" data-supplier-id="${supplier.id}" class="w-full mt-2 text-white font-bold py-3 px-4 rounded-lg" style="background-color: var(--primary-indigo);">Submit Review</button>
+                    </div>
+                </div>
+            `;
+        },
+
+        render_walkthrough() {
+            const faqs = [
+                { q: "How do I earn points in the Trust Hub?", a: "You earn points for contributing to the community! This includes leaving detailed reviews for suppliers (+50 points), adding a new trusted supplier (+100 points), and verifying supplier information (+20 points)." },
+                { q: "What's the difference between Search and Marketplace?", a: "Use <b>Search</b> when you know what you're looking for (e.g., 'Manali package'). Use <b>Marketplace</b> to discover exclusive, time-sensitive deals and flash sales from suppliers when you're looking for inspiration or great value." },
+                { q: "How do I handle a crisis alert?", a: "When the red bell icon appears in the header, tap it immediately. You'll be taken to the Crisis Management screen with AI-suggested alternatives and a communication hub to update all stakeholders at once." },
+                { q: "Can I use this on my desktop computer?", a: "Absolutely! While designed for mobile, the platform is fully responsive and works beautifully on desktops. The layout will adapt to a larger screen, giving you more room to work." }
+            ];
+
+            return `
+                <div class="space-y-6">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h2 class="text-xl font-bold mb-3 text-indigo-600">1. The Smart Dashboard: Your Proactive Assistant</h2>
+                        <p class="text-sm text-gray-600">Your dashboard is your new command center. The <b>"For You"</b> feed doesn't just show data; it brings you actionable opportunities. It analyzes market trends, client history, and supplier performance to give you strategic advice. Act on these insights to stay ahead and boost your revenue.</p>
+                    </div>
+                     <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h2 class="text-xl font-bold mb-3 text-teal-600">2. Master Your Workflow with Quick Actions</h2>
+                        <p class="text-sm text-gray-600 mb-4">We've streamlined your most common tasks to save you valuable time:</p>
+                        <p class="text-sm text-gray-600 mb-2"><b>Swipeable Bookings:</b> In the "Bookings" tab, swipe left on any booking card to instantly reveal actions like "Log Payment" or "Call Client."</p>
+                        <p class="text-sm text-gray-600"><b>Global FAB:</b> The purple "+" button at the bottom right is your shortcut to creation. Tap it anytime to start a "New Itinerary" or "New Booking" from anywhere in the app.</p>
+                    </div>
+                     <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h2 class="text-xl font-bold mb-3 text-amber-600">3. Become a Leader in the Trust Hub</h2>
+                        <p class="text-sm text-gray-600">Your expertise is now recognized and rewarded. Go to <b>More > Trust Hub</b> to see your community rank and points. Earn points and badges by leaving quality reviews for suppliers. This not only helps your peers but also establishes you as a trusted expert in the travel community.</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h2 class="text-xl font-bold mb-4">Frequently Asked Questions</h2>
+                        <div class="space-y-2">
+                        ${faqs.map((faq, index) => `
+                            <div class="border-b border-gray-200/80 pb-2">
+                                <div data-action="toggleAccordion" class="flex justify-between items-center cursor-pointer py-2">
+                                    <h3 class="font-semibold text-sm pr-4">${faq.q}</h3>
+                                    <i class="ph-caret-down text-lg transition-transform text-gray-500"></i>
+                                </div>
+                                <div class="accordion-content">
+                                    <p class="text-sm text-gray-600 pt-2">${faq.a}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        },
+
+        render_search: function() { return this._renderSearchForm(); },
+        render_search_results: function() { return this._renderSearchForm(true); },
+        _renderSearchForm(showResults = false) { 
+            const { query } = this.navigationContext; 
+            
+            let resultsHTML = '<div class="text-center py-10"><i class="ph-magnifying-glass text-4xl text-gray-300"></i><p class="mt-2 text-gray-500">Search for packages, hotels, or flights.</p></div>';
+            
+            if (showResults) {
+                let results = [];
+                const lowerQuery = query.toLowerCase();
+                if (this.searchTab === 'Packages') {
+                    results = mockData.searchResults.filter(p => query && (p.title.toLowerCase().includes(lowerQuery) || p.details.toLowerCase().includes(lowerQuery)));
+                    resultsHTML = results.length > 0 ? results.map(r => `<div class="bg-white rounded-lg shadow-sm border overflow-hidden mb-4"><img src="${r.img}" class="w-full h-40 object-cover" /><div class="p-4"><div class="flex justify-between items-start"><h3 class="text-md font-semibold">${r.title}</h3><div class="flex items-center font-bold text-sm text-amber-500"><i class="ph-star-fill"></i><span class="ml-1">${r.rating}</span></div></div><p class="text-xs mt-1 text-gray-500">${r.details}</p><div class="flex justify-between items-center mt-3"><p class="text-lg font-bold text-green-600">₹${r.price.toLocaleString('en-IN')}</p><button data-action="buildItinerary" data-package-id="${r.id}" class="text-white text-sm font-bold py-2 px-4 rounded-lg bg-amber-500">View</button></div></div></div>`).join('') : '<p class="text-center text-gray-500 py-10">No packages found.</p>';
+                } else if (this.searchTab === 'Hotels') {
+                    results = mockData.hotels.filter(h => query && h.destination.toLowerCase().includes(lowerQuery));
+                    resultsHTML = results.length > 0 ? results.map(h => `<div class="bg-white rounded-lg shadow-sm border overflow-hidden mb-4 flex"><img src="${h.img}" class="w-24 h-24 object-cover" /><div class="p-4 flex-1"><h3 class="text-md font-semibold">${h.name}</h3><div class="flex items-center font-bold text-xs text-amber-500 mt-1"><i class="ph-star-fill"></i><span class="ml-1">${h.rating}</span></div><p class="text-md font-bold text-green-600 mt-2">₹${h.price.toLocaleString('en-IN')}</p></div></div>`).join('') : '<p class="text-center text-gray-500 py-10">No hotels found.</p>';
+                } else if (this.searchTab === 'Flights') {
+                    results = mockData.flights.filter(f => query && f.to.toLowerCase().includes(lowerQuery));
+                    resultsHTML = results.length > 0 ? results.map(f => `<div class="bg-white rounded-lg shadow-sm border p-4 mb-4"><div class="flex items-center"><img src="${f.img}" class="w-8 h-8 mr-3"/><div class="flex-1"><p class="font-semibold text-sm">${f.airline}</p><p class="text-xs text-gray-500">${f.from} to ${f.to}</p></div><p class="font-bold text-green-600">₹${f.price.toLocaleString('en-IN')}</p></div></div>`).join('') : '<p class="text-center text-gray-500 py-10">No flights found.</p>';
+                }
+            }
+
+            return `<div class="space-y-4">
+                        <div class="bg-gray-100 rounded-lg p-1 flex items-center text-sm">${['Packages','Hotels','Flights'].map(t => `<button data-action="changeSearchTab" data-tab="${t}" class="search-tab flex-1 text-center font-medium py-1.5 px-2 rounded-md ${this.searchTab===t ? 'active':''}">${t}</button>`).join('')}</div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border">
+                            <div class="${this.searchTab === 'Packages' ? '' : 'hide'}"><input type="text" id="package-search-input" value="${query||''}" placeholder="e.g., Manali trip" class="w-full px-4 py-2.5 border rounded-lg"></div>
+                            <div class="${this.searchTab === 'Hotels' ? '' : 'hide'}"><input type="text" id="hotel-search-input" value="${query||''}" placeholder="e.g., Manali" class="w-full px-4 py-2.5 border rounded-lg"></div>
+                            <div class="${this.searchTab === 'Flights' ? '' : 'hide'}">
+                                <div class="space-y-2">
+                                    <input type="text" id="flight-from-input" placeholder="From" class="w-full px-4 py-2.5 border rounded-lg">
+                                    <input type="text" id="flight-search-input" value="${query||''}" placeholder="To (e.g., Goa)" class="w-full px-4 py-2.5 border rounded-lg">
+                                    <input type="date" id="flight-date-input" class="w-full px-4 py-2.5 border rounded-lg text-gray-500">
+                                </div>
+                            </div>
+                            <button data-action="performSearch" class="w-full mt-3 text-white font-bold py-3 rounded-lg bg-indigo-600">Search</button>
+                        </div>
+                        <div id="search-results-container" class="pt-4">${resultsHTML}</div>
+                    </div>`;
+        },
+        render_itinerary_builder() {
+             if (!this.currentItinerary) return `<div class="bg-white p-6 rounded-xl text-center"><p class="text-gray-500">No itinerary selected. Please search for a package first.</p></div>`;
+            return `
+                <div class="space-y-6">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h2 class="text-xl font-semibold">${this.currentItinerary.title}</h2>
+                        <p class="text-sm text-gray-500">for ${this.currentItinerary.clientName}</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                         <h3 class="text-lg font-bold mb-3">Day-wise Plan</h3>
+                         <div class="space-y-2">
+                            ${this.currentItinerary.dayWisePlan.map((day, index) => {
+                                const hotel = mockData.hotels.find(h => h.id === day.hotelId);
+                                return `
+                                <div class="border rounded-lg">
+                                    <div data-action="toggleAccordion" class="flex justify-between items-center p-3 cursor-pointer bg-gray-50 rounded-t-lg">
+                                        <h4 class="font-semibold text-sm">Day ${day.day}: ${day.title}</h4>
+                                        <i class="ph-caret-down text-lg text-gray-500"></i>
+                                    </div>
+                                    <div class="accordion-content p-3">
+                                        <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
+                                            ${day.activities.map(act => `<li>${act}</li>`).join('')}
+                                        </ul>
+                                        ${hotel ? `<div class="mt-3 pt-3 border-t"><p class="text-xs font-semibold text-gray-400 mb-1">STAY</p><p class="text-sm font-semibold">${hotel.name}</p></div>` : ''}
+                                    </div>
+                                </div>
+                                `
+                            }).join('')}
+                         </div>
+                    </div>
+                    
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-bold mb-3">Cost & Profit</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between"><span class="text-gray-600">Base Price:</span> <span>₹${this.currentItinerary.price.toLocaleString('en-IN')}</span></div>
+                            <div class="flex justify-between"><span class="text-gray-600">Addons:</span> <span>+ ₹${this.currentItinerary.addons.reduce((sum, a) => sum + a.price, 0).toLocaleString('en-IN')}</span></div>
+                            <div class="flex justify-between font-bold border-t pt-2 mt-2"><span >Total Price:</span> <span>₹${this.currentItinerary.totalPrice.toLocaleString('en-IN')}</span></div>
+                            <div class="flex justify-between font-bold text-green-600"><span>Your Profit (${this.currentItinerary.margin}%):</span> <span>₹${this.currentItinerary.profit.toLocaleString('en-IN')}</span></div>
+                        </div>
+                    </div>
+                    <button id="optimize-itinerary-btn" data-action="optimizeItinerary" class="w-full flex items-center justify-center text-white font-bold py-3 px-4 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600">✨ Optimize with AI</button>
+                    <button data-action="generateQuote" class="w-full text-white font-bold py-3 px-4 rounded-lg bg-green-500">Generate & Send Quote</button>
+                </div>
+            `;
+        },
+        render_profile() {
+            const { name, agency, points, rank, badges } = mockData.user;
+            return `
+                <div class="space-y-6">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border text-center">
+                        <img src="https://placehold.co/80x80/F59E0B/FFFFFF?text=RK" class="w-20 h-20 rounded-full mx-auto" alt="User Avatar">
+                        <h2 class="text-2xl font-bold mt-4">${name}</h2>
+                        <p class="text-gray-500">${agency}</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-semibold mb-3">Your Stats</h3>
+                        <div class="flex justify-around">
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-indigo-600">#${rank}</p>
+                                <p class="text-xs text-gray-500">Community Rank</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-amber-500">${points}</p>
+                                <p class="text-xs text-gray-500">Reputation Points</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-semibold mb-3">Your Badges</h3>
+                        <div class="flex items-center space-x-2">
+                            ${badges.map(badge => `<span class="text-sm font-semibold bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">${badge}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        },
+        render_finance() {
+            const invoices = mockData.bookings.filter(b => b.invoice).map(b => ({...b.invoice, bookingId: b.id, client: b.client}));
+            const statusClasses = { Paid: 'bg-green-100 text-green-800', Due: 'bg-amber-100 text-amber-800', Overdue: 'bg-red-100 text-red-800' };
+            return `
+                <div class="space-y-6">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border"><p class="text-xs text-gray-500">Total Outstanding</p><p class="text-2xl font-bold text-red-500">₹${invoices.filter(i => i.status !== 'Paid').reduce((s,i) => s + (i.amount - i.paid), 0).toLocaleString('en-IN')}</p></div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border"><p class="text-xs text-gray-500">Revenue (This Month)</p><p class="text-2xl font-bold text-green-500">₹${invoices.filter(i => i.status === 'Paid').reduce((s,i) => s + i.amount, 0).toLocaleString('en-IN')}</p></div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h2 class="text-xl font-bold mb-4">All Invoices</h2>
+                        <div class="space-y-3">
+                            ${invoices.map(inv => `
+                                <div data-action="navigate" data-view="booking_details" data-booking-id="${inv.bookingId}" class="border rounded-lg p-3 cursor-pointer active:bg-gray-50">
+                                    <div class="flex justify-between items-center">
+                                        <p class="font-semibold text-sm">${inv.client}</p>
+                                        <span class="text-xs font-semibold px-2 py-1 rounded-full ${statusClasses[inv.status]}">${inv.status}</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500">${inv.id}</p>
+                                    <p class="text-lg font-bold text-right mt-2">₹${inv.amount.toLocaleString('en-IN')}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        },
+        render_booking_details() {
+            const { bookingId } = this.navigationContext;
+            const booking = mockData.bookings.find(b => b.id === bookingId);
+            if (!booking) return `<h1>Booking not found.</h1>`;
+            const statusClasses = { Paid: 'bg-green-100 text-green-800', Due: 'bg-amber-100 text-amber-800', Overdue: 'bg-red-100 text-red-800' };
+            return `
+                <div class="space-y-6">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h2 class="text-xl font-bold">${booking.destination} Trip for ${booking.client}</h2>
+                                <p class="text-sm text-gray-500">Booking ID: ${booking.id}</p>
+                            </div>
+                             <button data-action="showEditBookingModal" data-booking-id="${booking.id}" class="text-indigo-600"><i class="ph-pencil-simple text-xl"></i></button>
+                        </div>
+                         ${booking.value > 0 ? `<p class="text-2xl font-bold mt-2 text-green-600">₹${booking.value.toLocaleString('en-IN')}</p>` : ''}
+                    </div>
+                     <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-bold mb-3">Assignment</h3>
+                        ${booking.status === 'Inquiry' 
+                            ? (booking.assignedTo 
+                                ? `<p class="text-sm">Assigned to: <span class="font-semibold p-1 rounded bg-gray-100">${booking.assignedTo}</span></p>`
+                                : `<button data-action="showAssignModal" data-booking-id="${booking.id}" class="w-full text-white font-bold py-3 rounded-lg bg-indigo-600">Assign to Team</button>`)
+                            : `<p class="text-sm">Assigned to: <span class="font-semibold p-1 rounded bg-gray-100">${booking.assignedTo || 'N/A'}</span></p>`
+                        }
+                    </div>
+                    ${booking.status === 'Inquiry' ? `
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                         <h3 class="text-lg font-bold mb-3">Next Steps</h3>
+                         <div class="space-y-3">
+                            <button data-action="buildQuoteFromInquiry" data-booking-id="${booking.id}" class="w-full text-white font-bold py-3 rounded-lg bg-green-500">Build from Package</button>
+                            <button data-action="createCustomItinerary" data-booking-id="${booking.id}" class="w-full text-indigo-600 font-bold py-3 rounded-lg bg-indigo-100">Create Custom Itinerary</button>
+                         </div>
+                    </div>` : ''}
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-bold mb-3">Finance</h3>
+                        ${booking.invoice ? `
+                            <div>
+                                <div class="flex justify-between items-center">
+                                    <p class="font-semibold">Invoice ${booking.invoice.id}</p>
+                                    <span class="text-xs font-semibold px-2 py-1 rounded-full ${statusClasses[booking.invoice.status]}">${booking.invoice.status}</span>
+                                </div>
+                                <div class="mt-2 pt-2 border-t">
+                                    <div class="flex justify-between text-sm"><span class="text-gray-500">Total Amount:</span> <span class="font-semibold">₹${booking.invoice.amount.toLocaleString('en-IN')}</span></div>
+                                    <div class="flex justify-between text-sm"><span class="text-gray-500">Amount Paid:</span> <span class="font-semibold">₹${booking.invoice.paid.toLocaleString('en-IN')}</span></div>
+                                    <div class="flex justify-between text-sm mt-1 font-bold"><span class="text-gray-500">Amount Due:</span> <span>₹${(booking.invoice.amount - booking.invoice.paid).toLocaleString('en-IN')}</span></div>
+                                </div>
+                                <button data-action="logPayment" data-booking-id="${booking.id}" class="w-full mt-4 bg-gray-100 text-gray-800 font-bold py-3 rounded-lg">Log Payment</button>
+                            </div>
+                        ` : (booking.status !== 'Inquiry' ? `
+                            <p class="text-gray-500 text-sm">No invoice generated yet.</p>
+                            <button data-action="generateInvoice" data-booking-id="${booking.id}" class="w-full mt-2 text-white font-bold py-3 rounded-lg bg-indigo-600">Generate Invoice</button>
+                        ` : '<p class="text-gray-500 text-sm">An invoice can be generated after a quote is confirmed.</p>')}
+                    </div>
+                </div>
+            `;
+        },
+        render_analytics() { 
+             const analysis = mockData.analyticsData.pricingAnalysis['PKG_MANALI_01'];
+            return `
+                <div class="space-y-6">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-bold mb-3">Monthly Revenue (Lakhs)</h3>
+                        <canvas id="revenue-chart"></canvas>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-bold mb-3">Bookings by Destination</h3>
+                        <canvas id="bookings-chart"></canvas>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-bold mb-3">Pricing Optimizer</h3>
+                        <p class="text-sm font-semibold">Himalayan Escape Package</p>
+                        <div class="mt-4">
+                            <input id="pricing-optimizer-slider" type="range" min="${analysis.baseCost}" max="${analysis.marketAvg + 20000}" value="${analysis.recommended}" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>₹${analysis.baseCost.toLocaleString('en-IN')}</span>
+                                <span>₹${(analysis.marketAvg + 20000).toLocaleString('en-IN')}</span>
+                            </div>
+                            <div class="mt-4 text-center">
+                                <p class="text-gray-600 text-sm">Your Price:</p>
+                                <p id="pricing-optimizer-price" class="text-2xl font-bold text-green-600">₹${analysis.recommended.toLocaleString('en-IN')}</p>
+                                <p id="pricing-optimizer-commission" class="text-md font-semibold text-green-700 mt-1">${((analysis.recommended - analysis.baseCost)/analysis.recommended*100).toFixed(1)}% Commission</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `; 
+        },
+        render_clients() {
+            const today = new Date('2025-10-09');
+            const activeClients = mockData.bookings.filter(b => b.status === 'In-Progress');
+            const upcomingClients = mockData.bookings.filter(b => b.status === 'Confirmed' && new Date(b.travelDate) > today);
+            const pastClients = mockData.bookings.filter(b => b.status === 'Completed');
+            
+            let clientList;
+            if (this.clientsTab === 'Active') clientList = activeClients;
+            else if (this.clientsTab === 'Upcoming') clientList = upcomingClients;
+            else clientList = pastClients;
+
+            return `
+                 <div class="flex flex-col h-full">
+                    <div class="bg-gray-100 rounded-lg p-1 flex items-center text-sm mb-4">
+                        <button data-action="changeClientsTab" data-tab="Active" class="clients-tab flex-1 text-center font-medium py-1.5 px-2 rounded-md ${this.clientsTab==='Active' ? 'active':''}">${activeClients.length} Active</button>
+                        <button data-action="changeClientsTab" data-tab="Upcoming" class="clients-tab flex-1 text-center font-medium py-1.5 px-2 rounded-md ${this.clientsTab==='Upcoming' ? 'active':''}">${upcomingClients.length} Upcoming</button>
+                        <button data-action="changeClientsTab" data-tab="Past" class="clients-tab flex-1 text-center font-medium py-1.5 px-2 rounded-md ${this.clientsTab==='Past' ? 'active':''}">${pastClients.length} Past</button>
+                    </div>
+                     <div class="space-y-3">
+                        ${clientList.length > 0 ? clientList.map(b => {
+                            const client = mockData.clients.find(c => c.name === b.client);
+                            return `
+                                <div class="bg-white rounded-lg shadow-sm border p-3">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <p class="font-semibold">${b.client}</p>
+                                            <p class="text-xs text-gray-500">${b.destination} Trip</p>
+                                        </div>
+                                        <button data-action="setReminder" data-client-name="${b.client}" class="text-xs font-semibold text-indigo-600 bg-indigo-100 px-2 py-1 rounded-md">Set Reminder</button>
+                                    </div>
+                                    <div class="flex justify-between items-center mt-3 text-xs border-t pt-2">
+                                        <span class="font-medium text-gray-600">Travel Date:</span>
+                                        <span class="font-bold">${new Date(b.travelDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
+                                    </div>
+                                </div>
+                            `
+                        }).join('') : `<div class="text-center text-sm text-gray-400 pt-10">No clients in this category.</div>`}
+                     </div>
+                </div>
+            `;
+        },
+        render_client_details() {
+            const { clientId } = this.navigationContext;
+            const client = mockData.clients.find(c => c.id === clientId);
+             if (!client) return `<h1>Client not found.</h1>`;
+            return `
+                <div class="space-y-6">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h2 class="text-2xl font-bold">${client.name}</h2>
+                        <div class="grid grid-cols-2 gap-4 mt-4 text-center">
+                            <div>
+                                <p class="text-xl font-bold text-green-600">₹${client.totalSpend.toLocaleString('en-IN')}</p>
+                                <p class="text-xs text-gray-500">Total Spend</p>
+                            </div>
+                            <div>
+                                <p class="text-xl font-bold text-indigo-600">${client.totalBookings}</p>
+                                <p class="text-xs text-gray-500">Total Bookings</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                         <h3 class="text-lg font-bold mb-3">Communication Log</h3>
+                         <div class="space-y-3">
+                            ${client.communication.map(log => `
+                                <div>
+                                    <p class="text-xs text-gray-500">${new Date(log.date).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</p>
+                                    <p class="text-sm">${log.log}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        },
+        render_marketplace() {
+            return `
+                <div class="space-y-6">
+                    <div>
+                        <h2 class="text-xl font-bold mb-3">Flash Sales</h2>
+                        ${mockData.deals.filter(d => d.type === 'Flash Sale').map(deal => `
+                             <div class="bg-white rounded-lg shadow-sm border overflow-hidden mb-4">
+                                <img src="${deal.img}" class="w-full h-40 object-cover">
+                                <div class="p-3">
+                                    <h3 class="font-semibold">${deal.title}</h3>
+                                    <p class="text-xs text-gray-500 mt-1">${deal.description}</p>
+                                    <div class="mt-2 text-center text-red-600 font-bold bg-red-100 rounded py-1 text-sm countdown-timer" data-expiration="${deal.expiration}"></div>
+                                    <button data-action="buildItinerary" data-package-id="${deal.packageId}" class="w-full mt-2 text-white font-bold py-2 rounded-lg bg-amber-500">View Deal</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold mb-3">Exclusive Deals</h2>
+                        ${mockData.deals.filter(d => d.type === 'Exclusive').map(deal => `
+                            <div class="bg-white rounded-lg shadow-sm border mb-4 flex">
+                                <img src="${deal.img}" class="w-24 h-full object-cover rounded-l-lg">
+                                <div class="p-3 flex-1">
+                                    <h3 class="font-semibold text-sm">${deal.title}</h3>
+                                    <p class="text-xs text-gray-500 mt-1">${deal.description}</p>
+                                    <div class="mt-2 flex justify-between items-center">
+                                         <span class="font-bold text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full text-xs">${deal.discount}</span>
+                                         <button data-action="buildItinerary" data-package-id="${deal.packageId}" class="text-xs font-bold text-amber-600">Book Now</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        },
+        render_trip_dashboard() {
+            const { bookingId, destination } = this.navigationContext;
+            const trip = mockData.bookings.find(b => b.id === bookingId);
+            const liveData = mockData.liveTripData[bookingId] || { weather: {}, alerts:[], news:[], checklist: [] };
+            return `
+                <div class="space-y-6">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h2 class="text-xl font-bold">Live Dashboard: ${trip.destination}</h2>
+                        <p class="text-sm text-gray-500">for ${trip.client}</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border text-center"><p class="text-xs text-gray-500">Weather</p><p class="text-2xl font-bold">${liveData.weather.temp || 'N/A'}</p><p class="text-xs text-gray-500">${liveData.weather.condition || ''}</p></div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border"><p class="text-xs text-gray-500 mb-1">Alerts</p>${liveData.alerts.length > 0 ? liveData.alerts.map(a => `<p class="text-xs font-semibold text-amber-700">${a.text}</p>`).join('') : '<p class="text-xs text-gray-400">No alerts.</p>'}</div>
+                    </div>
+                     <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-bold mb-3">AI-Generated Checklist</h3>
+                        <div id="ai-checklist-container">
+                             ${liveData.checklist.length === 0 
+                                ? `<button data-action="generateChecklist" data-booking-id="${bookingId}" class="w-full text-white font-bold py-3 rounded-lg bg-indigo-600">✨ Generate Checklist</button>`
+                                : liveData.checklist.map(cat => `
+                                    <div class="mb-3"><h4 class="font-semibold text-sm mb-1">${cat.category}</h4>
+                                    ${cat.items.map(item => `<div class="flex items-center text-sm py-1"><input type="checkbox" ${item.done ? 'checked' : ''} class="h-4 w-4 rounded border-gray-300"><label class="ml-2">${item.text}</label></div>`).join('')}
+                                    </div>
+                                `).join('')
+                            }
+                        </div>
+                    </div>
+                     <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-bold mb-3">✨ Ask a Local Expert</h3>
+                        <div class="relative">
+                           <input type="text" id="local-expert-input" placeholder="e.g., Best street food?" class="w-full pr-10 pl-4 py-2 border rounded-lg">
+                           <button id="ask-expert-btn" data-action="askLocalExpert" data-destination="${destination}" class="absolute right-2 top-1/2 -translate-y-1/2 text-indigo-600"><i class="ph-paper-plane-tilt text-2xl"></i></button>
+                        </div>
+                        <div id="local-expert-answer" class="mt-3"></div>
+                    </div>
+                </div>
+            `;
+        },
+        render_crisis() {
+            const { crisis } = mockData;
+            return `
+                <div class="space-y-6">
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg">
+                        <h2 class="font-bold">${crisis.issue}</h2>
+                        <p class="text-sm">${crisis.impact}</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-bold mb-3">Suggested Alternatives</h3>
+                        <div class="space-y-3">
+                        ${crisis.alternatives.map(alt => `
+                            <div class="border rounded-lg p-3 flex justify-between items-center">
+                                <div>
+                                    <span class="text-xs font-semibold bg-gray-200 text-gray-800 px-2 py-1 rounded">${alt.type}</span>
+                                    <p class="text-sm mt-2">${alt.details}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-bold ${alt.cost.startsWith('+') ? 'text-red-600' : 'text-green-600'}">${alt.cost}</p>
+                                    <button class="text-sm font-bold text-indigo-600 mt-1">SELECT</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                        </div>
+                    </div>
+                     <div class="bg-white p-4 rounded-xl shadow-sm border">
+                         <h3 class="text-lg font-bold mb-3">Communication Hub</h3>
+                         <textarea id="crisis-communication-textarea" placeholder="Type message or generate an AI draft..." class="w-full p-2 border rounded-lg h-24"></textarea>
+                         <button id="draft-crisis-update-btn" data-action="draftCrisisUpdate" class="w-full mt-2 text-white font-bold py-3 rounded-lg bg-indigo-600">✨ Draft Crisis Update</button>
+                    </div>
+                </div>
+            `;
+        },
+        
+        showLeaderboardModal() {
+            const modalContent = `
+                <div class="modal-content fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
+                    <h3 class="text-lg font-bold mb-4">Top Contributors</h3>
+                    <div class="space-y-3 max-h-[50vh] overflow-y-auto">
+                        ${mockData.leaderboard.map(item => `
+                            <div class="flex items-center p-2 rounded-lg ${item.isCurrentUser ? 'bg-indigo-100 border border-indigo-300' : ''}">
+                                <span class="font-bold text-lg w-8">${item.rank}.</span>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-sm">${item.name}</p>
+                                    <p class="text-xs text-gray-500">${item.agency}</p>
+                                </div>
+                                <p class="font-bold text-amber-500">${item.points} pts</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            this.openModal(modalContent);
+        },
+        
+        renderCharts() {
+            const { revenue, revenueLabels, bookingsByDest, bookingsByDestLabels } = mockData.analyticsData;
+            this.charts.revenue = new Chart(document.getElementById('revenue-chart'), {
+                type: 'line', data: { labels: revenueLabels, datasets: [{ label: 'Revenue', data: revenue, borderColor: 'var(--primary-indigo)', tension: 0.1, backgroundColor: 'rgba(79, 70, 229, 0.1)', fill: true }] }, options: { responsive: true }
+            });
+            this.charts.bookings = new Chart(document.getElementById('bookings-chart'), {
+                type: 'doughnut', data: { labels: bookingsByDestLabels, datasets: [{ label: 'Bookings', data: bookingsByDest, backgroundColor: ['#4F46E5', '#10B981', '#F59E0B', '#EF4444'] }] }, options: { responsive: true, cutout: '70%' }
+            });
+        },
+
+        renderSupplierPeerReviewChart() {
+            const { supplierId } = this.navigationContext;
+            const supplier = mockData.suppliers.find(s => s.id === supplierId);
+            const ratingCounts = supplier.peerReviews.reduce((acc, review) => {
+                acc[review.rating - 1]++;
+                return acc;
+            }, [0,0,0,0,0]);
+
+            this.charts.supplierPeerReviews = new Chart(document.getElementById('supplier-peer-review-chart'), {
+                type: 'bar',
+                data: {
+                    labels: ['😡', '😟', '😐', '🙂', '😄'],
+                    datasets: [{
+                        label: 'Number of Reviews',
+                        data: ratingCounts,
+                        backgroundColor: ['#EF4444', '#F97316', '#F59E0B', '#84CC16', '#22C55E'],
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+        },
+
+        render_team_hub() {
+            let content = '';
+            if (this.teamHubTab === 'Performance') {
+                content = `
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-bold mb-3">Team Leaderboard</h3>
+                        <div class="space-y-2">
+                            ${[...mockData.staff, mockData.user].sort((a,b) => (b.stats?.revenue || 0) - (a.stats?.revenue || 0)).map(s => `
+                                <div data-action="navigate" data-view="staff_details" data-staff-id="${s.id}" class="border rounded-lg p-3 flex items-center cursor-pointer active:bg-gray-50">
+                                    <div class="flex-1">
+                                        <p class="font-semibold text-sm">${s.name} <span class="text-xs text-gray-400 font-normal">${s.role}</span></p>
+                                        <p class="text-xs text-gray-500">${s.team || ''}</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-bold text-green-600">₹${(s.stats?.revenue || 0).toLocaleString('en-IN')}</p>
+                                        <p class="text-xs text-gray-500">${s.stats?.closed || 0} Deals Closed</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (this.teamHubTab === 'Manage') {
+                 content = `
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                         <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold">Manage Staff</h3>
+                            <button data-action="addNewStaff" class="text-sm font-bold text-white py-2 px-3 rounded-lg bg-indigo-600">Add New</button>
+                        </div>
+                        <div class="space-y-3">
+                            ${mockData.staff.map(s => `
+                                <div class="border rounded-lg p-3 flex items-center">
+                                    <div class="flex-1">
+                                        <p class="font-semibold text-sm">${s.name}</p>
+                                        <p class="text-xs text-gray-500">${s.role} - ${s.team}</p>
+                                    </div>
+                                    <button class="text-xs font-semibold text-red-500">Remove</button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="space-y-6">
+                    <div class="bg-gray-100 rounded-lg p-1 flex items-center text-sm mb-4">
+                        <button data-action="changeTeamHubTab" data-tab="Performance" class="team-tab flex-1 text-center font-medium py-1.5 px-2 rounded-md ${this.teamHubTab ==='Performance' ? 'active':''}">${'Performance'}</button>
+                        <button data-action="changeTeamHubTab" data-tab="Manage" class="team-tab flex-1 text-center font-medium py-1.5 px-2 rounded-md ${this.teamHubTab ==='Manage' ? 'active':''}">${'Manage Staff'}</button>
+                    </div>
+                    ${content}
+                </div>
+            `;
+        },
+
+        render_staff_details() {
+            const { staffId } = this.navigationContext;
+            const staff = mockData.staff.find(s => s.id === staffId) || mockData.user;
+             return `
+                <div class="space-y-6">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h2 class="text-2xl font-bold">${staff.name}</h2>
+                        <p class="text-sm text-gray-500">${staff.role} - ${staff.team || 'Management'}</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                         <div class="bg-white p-4 rounded-xl shadow-sm border"><p class="text-xs text-gray-500">Deals Closed</p><p class="text-3xl font-bold text-green-500">${staff.stats?.closed || 0}</p></div>
+                         <div class="bg-white p-4 rounded-xl shadow-sm border"><p class="text-xs text-gray-500">Avg. Margin</p><p class="text-3xl font-bold text-indigo-500">${staff.stats?.margin || 0}%</p></div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border text-center">
+                        <p class="text-xs text-gray-500">Total Revenue Generated</p>
+                        <p class="text-4xl font-bold text-green-600 mt-1">₹${(staff.stats?.revenue || 0).toLocaleString('en-IN')}</p>
+                    </div>
+                </div>
+             `;
+        },
+        render_custom_itinerary_builder() {
+            if (!this.currentItinerary) return `<h1>Error creating custom itinerary.</h1>`;
+            
+            return `
+                <div class="space-y-6">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h2 class="text-xl font-semibold">${this.currentItinerary.title}</h2>
+                        <p class="text-sm text-gray-500">for ${this.currentItinerary.clientName}</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-bold mb-3">Build Day-wise Plan</h3>
+                        <div id="custom-plan-container" class="space-y-2">
+                            ${this.currentItinerary.dayWisePlan.map((day, index) => `
+                                <div class="border rounded-lg p-3 bg-gray-50">
+                                    <p class="font-semibold text-sm">Day ${day.day}: ${day.title}</p>
+                                    <textarea class="w-full mt-2 p-2 border rounded-lg text-sm" rows="2" placeholder="Add activities for this day...">${day.activities.join('\n')}</textarea>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button data-action="addDayToCustomItinerary" class="w-full mt-3 text-sm font-semibold text-indigo-600 bg-indigo-100 py-2 rounded-lg">Add Day</button>
+                    </div>
+                    
+                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-bold mb-3">Add Components</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                             <button data-action="searchHotels" class="p-3 bg-gray-100 rounded-lg text-sm font-semibold">Book Hotel</button>
+                             <button data-action="searchFlights" class="p-3 bg-gray-100 rounded-lg text-sm font-semibold">Book Flight</button>
+                             <button data-action="addTransport" class="p-3 bg-gray-100 rounded-lg text-sm font-semibold">Add Transport</button>
+                             <button data-action="addActivity" class="p-3 bg-gray-100 rounded-lg text-sm font-semibold">Add Activity</button>
+                        </div>
+                    </div>
+
+                    <button data-action="generateQuote" class="w-full mt-2 text-white font-bold py-3 px-4 rounded-lg bg-green-500">Generate & Send Quote</button>
+                </div>
+            `;
+        },
+    };
+    document.addEventListener('DOMContentLoaded', () => {
+        app.init();
+    });
+    </script>
+</body>
+</html>
