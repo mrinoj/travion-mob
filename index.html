@@ -26,6 +26,8 @@
             --primary-indigo: #4F46E5;
             --success-green: #10B981;
             --danger-red: #EF4444;
+            --warning-orange: #F97316;
+            --info-blue: #3B82F6;
             --neutral-bg: #F8FAFC; /* Lighter gray for mobile */
             --neutral-text-light: #64748B;
             --neutral-text-dark: #0F172A;
@@ -123,7 +125,7 @@
             z-index: 1000;
         }
         .modal-content {
-             animation: slideInUp 0.3s ease-out forwards;
+            animation: slideInUp 0.3s ease-out forwards;
         }
         
         .accordion-content {
@@ -210,37 +212,37 @@
 
             <!-- FAB -->
             <div id="fab-container" class="fab-container">
-                 <div id="fab-actions" class="fab-actions">
-                     <div data-action="newBooking" class="fab-action cursor-pointer">
-                         <span class="mr-2">New Booking</span> <i class="ph-briefcase text-xl text-indigo-600"></i>
-                     </div>
-                     <div data-action="newItinerary" class="fab-action cursor-pointer">
-                         <span class="mr-2">New Itinerary</span> <i class="ph-scroll text-xl text-indigo-600"></i>
-                     </div>
-                 </div>
-                 <button id="fab" class="fab flex items-center justify-center">
-                     <i class="ph-plus text-3xl"></i>
-                 </button>
+                    <div id="fab-actions" class="fab-actions">
+                        <div data-action="newBooking" class="fab-action cursor-pointer">
+                            <span class="mr-2">New Booking</span> <i class="ph-briefcase text-xl text-indigo-600"></i>
+                        </div>
+                        <div data-action="newItinerary" class="fab-action cursor-pointer">
+                            <span class="mr-2">New Itinerary</span> <i class="ph-scroll text-xl text-indigo-600"></i>
+                        </div>
+                    </div>
+                    <button id="fab" class="fab flex items-center justify-center">
+                        <i class="ph-plus text-3xl"></i>
+                    </button>
             </div>
 
 
             <!-- Bottom Navigation -->
             <footer class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200/80 flex justify-around p-2 z-10">
-                 <button data-view="dashboard" class="bottom-nav-link flex flex-col items-center text-gray-500 w-full py-1 rounded-md">
-                    <i class="ph-fill ph-house text-2xl"></i><span class="text-xs mt-1">Dashboard</span>
-                </button>
-                 <button data-view="bookings" class="bottom-nav-link flex flex-col items-center text-gray-500 w-full py-1 rounded-md">
-                    <i class="ph-fill ph-briefcase text-2xl"></i><span class="text-xs mt-1">Bookings</span>
-                </button>
-                 <button data-view="search" class="bottom-nav-link flex flex-col items-center text-gray-500 w-full py-1 rounded-md">
-                    <i class="ph-fill ph-magnifying-glass text-2xl"></i><span class="text-xs mt-1">Search</span>
-                </button>
-                 <button data-view="marketplace" class="bottom-nav-link flex flex-col items-center text-gray-500 w-full py-1 rounded-md">
-                    <i class="ph-fill ph-storefront text-2xl"></i><span class="text-xs mt-1">Deals</span>
-                </button>
-                 <button data-view="more" class="bottom-nav-link flex flex-col items-center text-gray-500 w-full py-1 rounded-md">
-                    <i class="ph-fill ph-dots-three-circle text-2xl"></i><span class="text-xs mt-1">More</span>
-                </button>
+                    <button data-view="dashboard" class="bottom-nav-link flex flex-col items-center text-gray-500 w-full py-1 rounded-md">
+                        <i class="ph-fill ph-house text-2xl"></i><span class="text-xs mt-1">Dashboard</span>
+                    </button>
+                    <button data-view="bookings" class="bottom-nav-link flex flex-col items-center text-gray-500 w-full py-1 rounded-md">
+                        <i class="ph-fill ph-briefcase text-2xl"></i><span class="text-xs mt-1">Bookings</span>
+                    </button>
+                    <button data-view="search" class="bottom-nav-link flex flex-col items-center text-gray-500 w-full py-1 rounded-md">
+                        <i class="ph-fill ph-magnifying-glass text-2xl"></i><span class="text-xs mt-1">Search</span>
+                    </button>
+                    <button data-view="marketplace" class="bottom-nav-link flex flex-col items-center text-gray-500 w-full py-1 rounded-md">
+                        <i class="ph-fill ph-storefront text-2xl"></i><span class="text-xs mt-1">Deals</span>
+                    </button>
+                    <button data-view="more" class="bottom-nav-link flex flex-col items-center text-gray-500 w-full py-1 rounded-md">
+                        <i class="ph-fill ph-dots-three-circle text-2xl"></i><span class="text-xs mt-1">More</span>
+                    </button>
             </footer>
 
             <!-- Modal and Toast Container -->
@@ -255,12 +257,17 @@
     // ========================================================================
 
     const mockData = {
-        user: { id: 'U_01', name: "Rajesh Kumar", role: 'Admin', agency: "Mumbai Travel Co.", points: 1250, rank: 12, badges: ["Goa Expert", "Top Reviewer '25"] },
+        user: { id: 'U_01', name: "Rajesh Kumar", role: 'Admin', agency: "Mumbai Travel Co.", points: 1250, rank: 12, badges: ["Goa Expert", "Top Reviewer '25"], stats: { closed: 15, revenue: 1250000, margin: 19.2, monthlyGoal: 2000000 } },
         teams: ["Packages Team", "Flights Team", "Operations Team", "Finance Team"],
         staff: [
-            { id: 'U_02', name: "Priya S.", role: 'Manager', team: 'Packages Team', stats: { closed: 12, revenue: 850000, margin: 18.5 } },
-            { id: 'U_03', name: "Amit P.", role: 'Agent', team: 'Packages Team', stats: { closed: 8, revenue: 520000, margin: 16.2 } },
-            { id: 'U_04', name: "Sunita M.", role: 'Agent', team: 'Flights Team', stats: { closed: 25, revenue: 310000, margin: 8.1 } },
+            { id: 'U_02', name: "Priya S.", role: 'Manager', team: 'Packages Team', stats: { closed: 12, revenue: 850000, margin: 18.5, monthlyGoal: 1000000 } },
+            { id: 'U_03', name: "Amit P.", role: 'Agent', team: 'Packages Team', stats: { closed: 8, revenue: 520000, margin: 16.2, monthlyGoal: 700000 } },
+            { id: 'U_04', name: "Sunita M.", role: 'Agent', team: 'Flights Team', stats: { closed: 25, revenue: 310000, margin: 8.1, monthlyGoal: 400000 } },
+        ],
+        teamActivity: [
+            "Priya S. sent a quote to Mehta Couple.",
+            "A new inquiry for Goa was created.",
+            "Amit P. moved Gupta Group to 'Confirmed'."
         ],
         leaderboard: [
             { rank: 1, name: "Priya S.", agency: "Jaipur Journeys", points: 2100 },
@@ -287,13 +294,14 @@
             { id: 'DEAL_KERALA_01', title: "Kerala Backwaters Houseboat", discount: "25% OFF", description: "Exclusive monsoon package.", img: `https://placehold.co/600x400/10B981/FFFFFF?text=Kerala`, type: 'Exclusive', packageId: 'PKG_MANALI_01'},
         ],
         bookings: [
-            { id: 'BK101', client: "Sharma Family", destination: "Goa", status: "Inquiry", value: 120000, invoice: null, travelDate: '2025-11-20', travelers: 4, assignedTo: null },
-            { id: 'BK102', client: "Gupta Group", destination: "Kerala", status: "Quoted", value: 250000, invoice: null, travelers: 12, assignedTo: 'Packages Team' },
-            { id: 'BK103', client: "Mr. Patel", destination: "Udaipur", status: "Confirmed", value: 85000, invoice: null, travelDate: '2025-10-12', travelers: 2, assignedTo: 'Operations Team' },
-            { id: 'BK104', client: "Jain Corporation", destination: "Delhi-Agra", status: "In-Progress", value: 450000, invoice: { id: 'INV-002', status: 'Due', amount: 450000, paid: 200000 }, travelDate: '2025-10-10', travelers: 20, assignedTo: 'Operations Team' },
-            { id: 'BK105', client: "Mehta Couple", destination: "Andaman", status: "Completed", value: 180000, invoice: { id: 'INV-003', status: 'Paid', amount: 180000, paid: 180000 }, travelDate: '2025-09-15', travelers: 2, assignedTo: 'Operations Team' },
-            { id: 'BK106', client: "Verma Partners", destination: "Manali", status: "Completed", value: 95000, packageId: 'PKG_MANALI_01', invoice: { id: 'INV-004', status: 'Overdue', amount: 95000, paid: 0 }, travelDate: '2025-09-01', travelers: 2, assignedTo: 'Packages Team' },
+            { id: 'BK101', client: "Sharma Family", destination: "Goa", status: "Inquiry", value: 120000, invoice: null, travelDate: '2025-11-20', travelers: 4, assignedTo: null, lastUpdated: '2025-10-09T10:00:00Z' },
+            { id: 'BK102', client: "Gupta Group", destination: "Kerala", status: "Quoted", value: 250000, invoice: null, travelers: 12, assignedTo: 'Packages Team', lastUpdated: '2025-10-08T15:30:00Z' },
+            { id: 'BK103', client: "Mr. Patel", destination: "Udaipur", status: "Confirmed", value: 85000, invoice: null, travelDate: '2025-10-12', travelers: 2, assignedTo: 'Operations Team', lastUpdated: '2025-10-07T11:00:00Z' },
+            { id: 'BK104', client: "Jain Corporation", destination: "Delhi-Agra", status: "In-Progress", value: 450000, invoice: { id: 'INV-002', status: 'Due', amount: 450000, paid: 200000, paymentDate: '2025-10-08' }, travelDate: '2025-10-10', travelers: 20, assignedTo: 'Operations Team', lastUpdated: '2025-10-06T18:00:00Z' },
+            { id: 'BK105', client: "Mehta Couple", destination: "Andaman", status: "Completed", value: 180000, invoice: { id: 'INV-003', status: 'Paid', amount: 180000, paid: 180000, paymentDate: '2025-10-09' }, travelDate: '2025-09-15', travelers: 2, assignedTo: 'Operations Team', lastUpdated: '2025-09-20T14:00:00Z' },
+            { id: 'BK106', client: "Verma Partners", destination: "Manali", status: "Completed", value: 95000, packageId: 'PKG_MANALI_01', invoice: { id: 'INV-004', status: 'Overdue', amount: 95000, paid: 0 }, travelDate: '2025-09-01', travelers: 2, assignedTo: 'Packages Team', lastUpdated: '2025-10-01T09:00:00Z' },
         ],
+        recentSearches: ["Manali", "hotels in Goa", "flights to Delhi"],
         searchResults: [
             { id: 'PKG_GOA_01', type: 'Package', title: "Goa Family Fun Package", price: 115000, rating: 4.9, details: "Includes 4-star hotel, flights, and activities.", img: `https://placehold.co/600x400/4338CA/FFFFFF?text=Goa+Package` },
             { 
@@ -320,8 +328,8 @@
             { id: 'SUP_02', name: "Goa Paradise Hotels", rating: 4.7, reviews: 210, trustScore: 92, service: "Accommodation", verified: true, analytics: { reliability: 95, value: 92, partnership: 90 }, peerReviews: [{by: 'Mumbai Voyager', rating: 5, comment: 'Excellent properties and very supportive staff.'}] },
         ],
         clients: [
-            { id: 'C_01', name: "Sharma Family", totalBookings: 5, totalSpend: 875000, lastTrip: "Goa", communication: [{date: '2025-09-01', log: 'Sent quote for Manali trip.'}, {date: '2025-08-28', log: 'Inquiry call for winter vacation.'}] },
-            { id: 'C_02', name: "Jain Corporation", totalBookings: 12, totalSpend: 4520000, lastTrip: "Corporate Retreat", communication: [{date: '2025-09-05', log: 'Confirmed booking for Agra offsite.'}] },
+            { id: 'C_01', name: "Sharma Family", totalBookings: 5, totalSpend: 875000, lastTrip: "Goa", communication: [{date: '2025-09-01', log: 'Sent quote for Manali trip.', by: 'Rajesh Kumar'}, {date: '2025-08-28', log: 'Inquiry call for winter vacation.', by: 'Rajesh Kumar'}] },
+            { id: 'C_02', name: "Jain Corporation", totalBookings: 12, totalSpend: 4520000, lastTrip: "Corporate Retreat", communication: [{date: '2025-09-05', log: 'Confirmed booking for Agra offsite.', by: 'Priya S.'}, {date: '2025-09-02', log: 'Finalized payment terms.', by: 'Rajesh Kumar'}] },
         ],
         analyticsData: {
             revenue: [18, 22, 25, 23, 28, 32], revenueLabels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep"],
@@ -359,6 +367,8 @@
         navigationHistory: [],
         currentItinerary: null,
         newBookingState: { step: 1, data: {} },
+        bookingFilters: { assignedTo: 'all', actionRequired: false, highValue: false },
+        bookingSort: 'travelDate',
         pageTitles: {
             dashboard: "Dashboard", bookings: "Bookings", search: "Search",
             marketplace: "Deals Marketplace", more: "More",
@@ -453,6 +463,7 @@
                 case 'addItineraryAddon': this.addItineraryAddon(params.addonId); break;
                 case 'showHotelOptions': this.showHotelOptions(parseInt(params.dayIndex, 10)); break;
                 case 'performSearch': this.performSearch(); break;
+                case 'performSmartSearch': this.performSmartSearch(); break;
                 case 'generateQuote': this.generateQuote(); break;
                 case 'generateInvoice': this.generateInvoice(params.bookingId); break;
                 case 'logPayment': this.showLogPaymentModal(params.bookingId); break;
@@ -478,6 +489,8 @@
                 case 'searchFlights': this.navigate('search', { fromCustomItinerary: true, searchType: 'Flights' }); break;
                 case 'addTransport': this.showToast("Adding Transport component..."); break;
                 case 'addActivity': this.showToast("Adding Activity component..."); break;
+                case 'showBookingFilters': this.showBookingFiltersModal(); break;
+                case 'showSearchFilters': this.showSearchFiltersModal(); break;
             }
         },
          handleMainContentInput(e) {
@@ -502,6 +515,8 @@
                 case 'assignToTeam': this.assignToTeam(params.bookingId, params.teamName); break;
                 case 'selectClientForItinerary': this.selectClientForItinerary(params.packageId, params.bookingId); break;
                 case 'updateBookingDetails': this.updateBookingDetails(params.bookingId); break;
+                case 'applyBookingFilters': this.applyBookingFilters(); break;
+                case 'applySearchFilters': this.applySearchFilters(); break;
             }
         },
         
@@ -686,6 +701,8 @@
                 searchInput = document.getElementById('hotel-search-input');
             } else if (this.searchTab === 'Flights') {
                 searchInput = document.getElementById('flight-search-input');
+            } else if (this.searchTab === 'Suppliers') {
+                searchInput = document.getElementById('supplier-search-input');
             }
 
             if (searchInput) {
@@ -702,6 +719,39 @@
             } else {
                 this.navigate('search_results', { query: query, type: this.searchTab });
             }
+        },
+
+        async performSmartSearch() {
+            const input = document.getElementById('smart-search-input');
+            const button = document.getElementById('smart-search-btn');
+            const resultsContainer = document.getElementById('search-results-container');
+            if(!input.value) return;
+
+            button.disabled = true;
+            button.innerHTML = `<i class="ph-spinner spinner"></i>`;
+            resultsContainer.innerHTML = `<div class="text-center py-10"><p class="text-gray-500">✨ Analyzing your request...</p></div>`;
+
+            const systemPrompt = "You are a travel search engine assistant. Based on the user's natural language query, identify relevant search parameters and find matching travel packages from the provided JSON data. Return the IDs of the matching packages as a simple JSON array: {\"results\": [\"PKG_ID_1\", \"PKG_ID_2\"]}. The user query is about travel in India.";
+            const userPrompt = `Query: "${input.value}". Search Data: ${JSON.stringify(mockData.searchResults)}`;
+
+            const result = await this.callGeminiAPI(systemPrompt, userPrompt, false, true);
+
+            if(result) {
+                try {
+                    const parsedResult = JSON.parse(result);
+                    if(parsedResult.results && parsedResult.results.length > 0) {
+                        this.navigate('search_results', { query: input.value, type: 'Packages', smartResults: parsedResult.results });
+                    } else {
+                        resultsContainer.innerHTML = `<p class="text-center text-gray-500 py-10">AI couldn't find a match. Try a broader search.</p>`;
+                    }
+                } catch(e) {
+                     resultsContainer.innerHTML = `<p class="text-center text-gray-500 py-10">AI search failed. Please try again.</p>`;
+                }
+            } else {
+                 resultsContainer.innerHTML = `<p class="text-center text-gray-500 py-10">AI search failed. Please try again.</p>`;
+            }
+            button.disabled = false;
+            button.innerHTML = `<i class="ph-paper-plane-tilt text-2xl"></i>`;
         },
         
         buildItinerary(packageId, bookingId = null) {
@@ -767,7 +817,7 @@
             this.navigate('bookings');
         },
         generateInvoice(bookingId) {
-             const booking = mockData.bookings.find(b => b.id === bookingId);
+            const booking = mockData.bookings.find(b => b.id === bookingId);
             if (booking && !booking.invoice) {
                 booking.invoice = { id: `INV-00${mockData.bookings.filter(b => b.invoice).length + 1}`, status: 'Due', amount: booking.value, paid: 0 };
                 this.showToast('Invoice generated!');
@@ -852,13 +902,13 @@
         showClientSelectionForItinerary(packageId) {
             const inquiryBookings = mockData.bookings.filter(b => b.status === 'Inquiry' || b.status === 'Quoted');
             const modalContent = `
-                 <div class="modal-content fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
-                    <h3 class="text-lg font-bold mb-4">Who is this itinerary for?</h3>
-                    <div class="space-y-2 max-h-[50vh] overflow-y-auto">
-                        <button data-action="selectClientForItinerary" data-package-id="${packageId || ''}" data-booking-id="new" class="w-full text-left p-3 bg-indigo-100 text-indigo-700 rounded-lg font-medium">A New Client</button>
-                        ${inquiryBookings.map(b => `<button data-action="selectClientForItinerary" data-package-id="${packageId || ''}" data-booking-id="${b.id}" class="w-full text-left p-3 bg-gray-100 rounded-lg font-medium">${b.client} - ${b.destination}</button>`).join('')}
+                    <div class="modal-content fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
+                        <h3 class="text-lg font-bold mb-4">Who is this itinerary for?</h3>
+                        <div class="space-y-2 max-h-[50vh] overflow-y-auto">
+                            <button data-action="selectClientForItinerary" data-package-id="${packageId || ''}" data-booking-id="new" class="w-full text-left p-3 bg-indigo-100 text-indigo-700 rounded-lg font-medium">A New Client</button>
+                            ${inquiryBookings.map(b => `<button data-action="selectClientForItinerary" data-package-id="${packageId || ''}" data-booking-id="${b.id}" class="w-full text-left p-3 bg-gray-100 rounded-lg font-medium">${b.client} - ${b.destination}</button>`).join('')}
+                        </div>
                     </div>
-                </div>
             `;
             this.openModal(modalContent);
         },
@@ -1042,12 +1092,104 @@
             });
             this.render();
         },
+        showBookingFiltersModal() {
+            const modalContent = `
+                <div class="modal-content fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
+                    <h3 class="text-lg font-bold mb-4">Filter & Sort</h3>
+                    
+                    <div class="mb-4">
+                        <h4 class="font-semibold text-sm mb-2">Filter by</h4>
+                        <div class="flex flex-wrap gap-2 text-sm">
+                            <button class="filter-btn-assignedTo p-2 rounded-lg border" data-value="all">All</button>
+                            <button class="filter-btn-assignedTo p-2 rounded-lg border" data-value="me">Assigned to Me</button>
+                            <button class="filter-btn-assignedTo p-2 rounded-lg border" data-value="unassigned">Unassigned</button>
+                        </div>
+                        <div class="mt-3 flex items-center">
+                            <input type="checkbox" id="filter-actionRequired" class="h-4 w-4 rounded border-gray-300" ${this.bookingFilters.actionRequired ? 'checked' : ''}>
+                            <label for="filter-actionRequired" class="ml-2 text-sm">Action Required</label>
+                        </div>
+                         <div class="mt-2 flex items-center">
+                            <input type="checkbox" id="filter-highValue" class="h-4 w-4 rounded border-gray-300" ${this.bookingFilters.highValue ? 'checked' : ''}>
+                            <label for="filter-highValue" class="ml-2 text-sm">High Value (> ₹2L)</label>
+                        </div>
+                    </div>
+
+                     <div class="mb-6">
+                        <h4 class="font-semibold text-sm mb-2">Sort by</h4>
+                        <select id="sort-bookings" class="w-full p-2 border rounded-lg bg-gray-50">
+                            <option value="travelDate" ${this.bookingSort === 'travelDate' ? 'selected' : ''}>Travel Date (Soonest First)</option>
+                            <option value="lastUpdated" ${this.bookingSort === 'lastUpdated' ? 'selected' : ''}>Last Updated</option>
+                            <option value="value" ${this.bookingSort === 'value' ? 'selected' : ''}>Value (High to Low)</option>
+                        </select>
+                    </div>
+                    
+                    <button data-action="applyBookingFilters" class="w-full text-white font-bold py-3 px-4 rounded-lg bg-indigo-600">Apply</button>
+                </div>
+            `;
+            this.openModal(modalContent);
+            
+            // Add active styles to filter buttons
+            document.querySelectorAll('.filter-btn-assignedTo').forEach(btn => {
+                if(btn.dataset.value === this.bookingFilters.assignedTo) {
+                    btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
+                }
+                btn.addEventListener('click', () => {
+                     document.querySelectorAll('.filter-btn-assignedTo').forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600'));
+                     btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
+                });
+            });
+        },
+        applyBookingFilters() {
+            this.bookingFilters.assignedTo = document.querySelector('.filter-btn-assignedTo.bg-indigo-600').dataset.value || 'all';
+            this.bookingFilters.actionRequired = document.getElementById('filter-actionRequired').checked;
+            this.bookingFilters.highValue = document.getElementById('filter-highValue').checked;
+            this.bookingSort = document.getElementById('sort-bookings').value;
+            this.closeModal();
+            this.render();
+            this.showToast("Filters applied!");
+        },
+         showSearchFiltersModal() {
+            const modalContent = `
+                <div class="modal-content fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
+                    <h3 class="text-lg font-bold mb-4">Filter & Sort</h3>
+                     <div id="filter-options"></div>
+                    <button data-action="applySearchFilters" class="w-full mt-4 text-white font-bold py-3 px-4 rounded-lg bg-indigo-600">Apply Filters</button>
+                </div>`;
+            this.openModal(modalContent);
+
+            let filterHTML = '';
+            if (this.searchTab === 'Packages') {
+                filterHTML = `
+                    <h4 class="font-semibold text-sm mb-2">Price Range</h4>
+                    <input type="range" class="w-full">
+                    <h4 class="font-semibold text-sm mb-2 mt-3">Trip Duration</h4>
+                    <select class="w-full p-2 border rounded-lg"><option>Any</option><option>1-3 Days</option><option>4-6 Days</option><option>7+ Days</option></select>
+                `;
+            } else if (this.searchTab === 'Hotels') {
+                filterHTML = `
+                    <h4 class="font-semibold text-sm mb-2">Star Rating</h4>
+                    <div class="flex space-x-2">${[1,2,3,4,5].map(s => `<button class="border p-2 rounded-lg flex-1">${s} ★</button>`).join('')}</div>
+                `;
+            } else if (this.searchTab === 'Flights') {
+                filterHTML = `
+                     <h4 class="font-semibold text-sm mb-2">Stops</h4>
+                    <div class="flex space-x-2 text-sm">${['Non-stop', '1 Stop', '2+ Stops'].map(s => `<button class="border p-2 rounded-lg flex-1">${s}</button>`).join('')}</div>
+                `;
+            } else {
+                 filterHTML = `<p class="text-sm text-gray-500">No filters available for this category.</p>`;
+            }
+            document.getElementById('filter-options').innerHTML = filterHTML;
+        },
+        applySearchFilters() {
+            this.closeModal();
+            this.showToast("Filters applied!");
+        },
 
         // ========================= GEMINI API FEATURES =========================
 
         async callGeminiAPI(systemPrompt, userPrompt, useGrounding = false, isJson = false) {
             const apiKey = "";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
             
             const payload = {
                 contents: [{ parts: [{ text: userPrompt }] }],
@@ -1127,7 +1269,7 @@
             if (result) {
                 textarea.value = result;
             } else {
-                 textarea.placeholder = "Type message to client, suppliers, etc...";
+                textarea.placeholder = "Type message to client, suppliers, etc...";
             }
             button.disabled = false;
         },
@@ -1161,89 +1303,261 @@
         // ========================= VIEW RENDERERS =========================
 
         render_dashboard() {
+            const { user } = mockData;
+            const progress = (user.stats.revenue / user.stats.monthlyGoal) * 100;
+            const today = new Date('2025-10-09');
+            const paymentsToday = mockData.bookings.filter(b => b.invoice?.paymentDate === today.toISOString().split('T')[0]).reduce((sum, b) => sum + b.invoice.paid, 0);
+            const paymentsDueThisWeek = mockData.bookings.filter(b => {
+                if (b.invoice?.status === 'Due') {
+                    const dueDate = new Date(b.travelDate);
+                    const diffDays = (dueDate - today) / (1000 * 60 * 60 * 24);
+                    return diffDays >= 0 && diffDays <= 7;
+                }
+                return false;
+            }).reduce((sum, b) => sum + (b.invoice.amount - b.invoice.paid), 0);
+            
             return `
-                <div id="dashboard-container" class="space-y-6">
-                    <div id="kpi-grid" class="grid grid-cols-2 gap-4">
-                        ${mockData.kpis.map(kpi => `
-                            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200/80">
-                                <p class="text-xs" style="color: var(--neutral-text-light);">${kpi.label}</p>
-                                <p class="text-2xl font-bold mt-1" style="color: var(--neutral-text-dark);">${kpi.value}</p>
-                                <p class="text-xs font-semibold mt-1" style="color: ${kpi.change.startsWith('+') ? 'var(--success-green)' : 'var(--danger-red)'};">${kpi.change}</p>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <div id="smart-assistant-feed">
-                        <h2 class="text-lg font-semibold mb-3" style="color: var(--neutral-text-dark);">For You</h2>
-                        <div class="space-y-3">
-                            ${mockData.smartFeed.map(item => {
-                                const colors = {
-                                    opportunity: { border: 'border-indigo-400', icon: 'text-indigo-600' },
-                                    engagement: { border: 'border-green-400', icon: 'text-green-600' },
-                                    alert: { border: 'border-amber-400', icon: 'text-amber-600' }
-                                };
-                                const color = colors[item.type] || colors.opportunity;
-                                return `
-                                <div class="bg-white p-4 rounded-lg border-l-4 ${color.border} shadow-sm">
-                                    <div class="flex items-start">
-                                        <i class="ph ${item.icon} text-2xl ${color.icon} mr-3 mt-1"></i>
-                                        <div>
-                                            <h3 class="font-bold text-sm text-gray-800">${item.title}</h3>
-                                            <p class="text-sm text-gray-600 mt-1">${item.text}</p>
-                                            <button data-action="${item.action}" data-view="${item.view}" ${item.clientId ? `data-client-id="${item.clientId}"` : ''} ${item.supplierId ? `data-supplier-id="${item.supplierId}"` : ''} class="mt-3 text-sm font-bold" style="color: var(--primary-indigo);">${item.actionText} <i class="ph-arrow-right"></i></button>
-                                        </div>
-                                    </div>
+                    <div class="space-y-6">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border">
+                            <h2 class="text-lg font-semibold">Your Performance</h2>
+                            <div class="mt-2">
+                                <p class="font-bold text-3xl text-green-600">₹${user.stats.revenue.toLocaleString('en-IN')}</p>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                                    <div class="bg-green-500 h-2.5 rounded-full" style="width: ${progress}%"></div>
                                 </div>
-                                `
-                            }).join('')}
+                                <p class="text-xs text-gray-500 mt-1 text-right">${Math.round(progress)}% of your ₹${user.stats.monthlyGoal.toLocaleString('en-IN')} goal</p>
+                            </div>
                         </div>
-                    </div>
-                     <div id="upcoming-departures" class="bg-white p-4 rounded-xl shadow-sm border border-gray-200/80">
-                        <h2 class="text-lg font-semibold mb-3" style="color: var(--neutral-text-dark);">Upcoming Departures</h2>
-                        <div class="space-y-3">
-                            ${mockData.upcomingDepartures.map(d => `
-                                <div data-action="navigate" data-view="trip_dashboard" data-booking-id="${d.bookingId}" data-destination="${d.destination}" class="border border-gray-200/80 rounded-lg p-3 flex items-center justify-between cursor-pointer active:bg-gray-100">
-                                    <div>
-                                        <p class="font-semibold text-sm">${d.client}</p>
-                                        <p class="text-xs text-gray-500">${d.destination}</p>
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="font-bold text-sm text-indigo-600">${new Date(d.departureDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</p>
-                                        <p class="text-xs text-gray-500">in ${Math.round((new Date(d.departureDate) - new Date('2025-10-08')) / 864e5)} days</p>
-                                    </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            ${mockData.kpis.map(kpi => `
+                                <div class="bg-white p-3 rounded-xl shadow-sm border">
+                                    <p class="text-xs text-gray-500">${kpi.label}</p>
+                                    <p class="text-xl font-bold mt-1">${kpi.value}</p>
+                                    <p class="text-xs font-bold ${kpi.change.startsWith('+') ? 'text-green-500' : 'text-red-500'}">${kpi.change}</p>
                                 </div>
                             `).join('')}
                         </div>
+
+                        <div class="bg-white p-4 rounded-xl shadow-sm border">
+                            <h2 class="text-lg font-semibold mb-3">Upcoming Departures</h2>
+                            <div class="space-y-3">
+                                ${mockData.upcomingDepartures.map(d => `
+                                    <div data-action="navigate" data-view="trip_dashboard" data-booking-id="${d.bookingId}" data-destination="${d.destination}" class="border rounded-lg p-3 cursor-pointer active:bg-gray-50">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <p class="font-semibold text-sm">${d.client}</p>
+                                                <p class="text-xs text-gray-500">${d.destination}</p>
+                                            </div>
+                                            <div class="text-right">
+                                                 <p class="font-bold text-sm text-indigo-600">${new Date(d.departureDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short'})}</p>
+                                                <p class="text-xs text-gray-500">Departure</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        ${user.role === 'Admin' ? `
+                        <div class="bg-white p-4 rounded-xl shadow-sm border">
+                            <h2 class="text-lg font-semibold mb-3">Live Cash Flow</h2>
+                            <div class="grid grid-cols-2 gap-4 text-center">
+                                <div>
+                                    <p class="text-3xl font-bold text-green-500">₹${paymentsToday.toLocaleString('en-IN')}</p>
+                                    <p class="text-xs text-gray-500">Received Today</p>
+                                </div>
+                                <div>
+                                    <p class="text-3xl font-bold text-amber-500">₹${paymentsDueThisWeek.toLocaleString('en-IN')}</p>
+                                    <p class="text-xs text-gray-500">Due This Week</p>
+                                </div>
+                            </div>
+                        </div>` : ''}
+
+                        ${user.role === 'Admin' || user.role === 'Manager' ? `
+                        <div class="bg-white p-4 rounded-xl shadow-sm border">
+                            <h2 class="text-lg font-semibold mb-3">Live Team Activity</h2>
+                            <div class="space-y-2">
+                              ${mockData.teamActivity.map(activity => `
+                                  <div class="text-sm text-gray-700 flex items-start">
+                                      <i class="ph-info text-blue-500 mr-2 mt-0.5"></i>
+                                      <span>${activity}</span>
+                                  </div>
+                              `).join('')}
+                            </div>
+                        </div>` : ''}
+                        
+                        <div class="bg-white p-4 rounded-xl shadow-sm border">
+                            <h2 class="text-lg font-semibold mb-3">Recent Communications</h2>
+                            <div class="space-y-3">
+                                ${mockData.clients.flatMap(c => c.communication.map(log => ({...log, client: c.name}))).slice(0,3).map(log => `
+                                    <div class="text-sm border-b pb-2">
+                                        <p class="text-gray-800">${log.log}</p>
+                                        <p class="text-xs text-gray-400 mt-1">with ${log.client} by ${log.by}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div id="ai-opportunities">
+                            <h2 class="text-lg font-semibold mb-3 text-purple-600">✨ AI-Powered Opportunities</h2>
+                            <div class="space-y-3">
+                                ${mockData.smartFeed.map(item => {
+                                    const colors = { opportunity: 'border-indigo-400', engagement: 'border-green-400', alert: 'border-amber-400' };
+                                    return `
+                                    <div class="bg-white p-4 rounded-lg border-l-4 ${colors[item.type] || 'border-gray-400'} shadow-sm">
+                                        <div class="flex items-start">
+                                            <i class="ph ${item.icon} text-2xl ${colors[item.type].replace('border', 'text')} mr-3 mt-1"></i>
+                                            <div>
+                                                <h3 class="font-bold text-sm text-gray-800">${item.title}</h3>
+                                                <p class="text-sm text-gray-600 mt-1">${item.text}</p>
+                                                <button data-action="${item.action}" data-view="${item.view}" ${item.clientId ? `data-client-id="${item.clientId}"` : ''} ${item.supplierId ? `data-supplier-id="${item.supplierId}"` : ''} class="mt-3 text-sm font-bold" style="color: var(--primary-indigo);">${item.actionText} <i class="ph-arrow-right"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    `
+                                }).join('')}
+                            </div>
+                        </div>
                     </div>
-                </div>`; 
+            `; 
         },
 
         render_bookings() { 
             const statuses = ["In-Progress", "Confirmed", "Quoted", "Inquiry", "Completed"];
-            const bookingsForStatus = mockData.bookings.filter(b => b.status === this.bookingStatusTab);
+            
+            const pipelineSummary = ['Inquiry', 'Quoted', 'Confirmed'].map(status => {
+                const value = mockData.bookings
+                    .filter(b => b.status === status)
+                    .reduce((sum, b) => sum + b.value, 0);
+                return { status, value };
+            });
+
+            // Filtering Logic
+            const today = new Date();
+            let filteredBookings = mockData.bookings.filter(b => b.status === this.bookingStatusTab);
+
+            if (this.bookingFilters.assignedTo === 'me') {
+                filteredBookings = filteredBookings.filter(b => b.assignedTo === mockData.user.name || mockData.teams.includes(b.assignedTo));
+            } else if (this.bookingFilters.assignedTo === 'unassigned') {
+                filteredBookings = filteredBookings.filter(b => !b.assignedTo);
+            }
+
+            if (this.bookingFilters.actionRequired) {
+                filteredBookings = filteredBookings.filter(b => {
+                    const travelDate = new Date(b.travelDate);
+                    const diffDays = (travelDate - today) / (1000 * 60 * 60 * 24);
+                    return b.invoice?.status === 'Overdue' || (!b.assignedTo && b.status === 'Inquiry') || (diffDays >= 0 && diffDays <= 7);
+                });
+            }
+
+            if (this.bookingFilters.highValue) {
+                filteredBookings = filteredBookings.filter(b => b.value > 200000);
+            }
+
+            // Sorting Logic
+            if (this.bookingSort === 'travelDate') {
+                filteredBookings.sort((a, b) => new Date(a.travelDate) - new Date(b.travelDate));
+            } else if (this.bookingSort === 'lastUpdated') {
+                filteredBookings.sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated));
+            } else if (this.bookingSort === 'value') {
+                filteredBookings.sort((a, b) => b.value - a.value);
+            }
+
 
             return `
                 <div id="kanban-board-mobile" class="flex flex-col h-full">
+                    <div class="mb-4">
+                        <h2 class="text-lg font-semibold mb-2">Pipeline Health Summary</h2>
+                        <div class="grid grid-cols-3 gap-2 text-center">
+                            ${pipelineSummary.map(p => `
+                                <div class="bg-white p-2 rounded-lg shadow-sm border">
+                                    <p class="text-xs font-medium text-gray-500">${p.status}</p>
+                                    <p class="font-bold text-sm">₹${p.value > 99999 ? (p.value/100000).toFixed(1) + 'L' : (p.value/1000).toFixed(0) + 'k'}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
                     <div class="flex items-center space-x-2 overflow-x-auto pb-3 -mx-4 px-4">
                         ${statuses.map(status => `
                             <button data-action="changeBookingStatusTab" data-status="${status}" class="booking-tab whitespace-nowrap text-sm font-medium py-2 px-4 rounded-full ${this.bookingStatusTab === status ? 'active' : 'bg-white text-gray-600'}">
                                 ${status} <span class="text-xs opacity-80">${mockData.bookings.filter(b=>b.status===status).length}</span>
                             </button>
                         `).join('')}
+                         <button data-action="showBookingFilters" class="ml-auto flex-shrink-0 bg-white text-gray-500 p-2 rounded-full shadow-sm border">
+                            <i class="ph-funnel text-lg"></i>
+                        </button>
                     </div>
+
                     <div class="space-y-3 mt-4">
-                        ${bookingsForStatus.length > 0 ? bookingsForStatus.map(booking => `
+                        ${filteredBookings.length > 0 ? filteredBookings.map(booking => {
+                            let indicatorHTML = '';
+                            const travelDate = new Date(booking.travelDate);
+                            const diffDays = (travelDate - today) / (1000 * 60 * 60 * 24);
+
+                            if (booking.invoice?.status === 'Overdue') {
+                                indicatorHTML = `<span class="absolute top-3 right-3 block h-2.5 w-2.5 rounded-full ring-2 ring-white" style="background-color: var(--danger-red);" title="Payment Overdue"></span>`;
+                            } else if (diffDays >= 0 && diffDays <= 7) {
+                                indicatorHTML = `<span class="absolute top-3 right-3 block h-2.5 w-2.5 rounded-full ring-2 ring-white" style="background-color: var(--warning-orange);" title="Upcoming Travel"></span>`;
+                            } else if (!booking.assignedTo && booking.status === 'Inquiry') {
+                                indicatorHTML = `<span class="absolute top-3 right-3 block h-2.5 w-2.5 rounded-full ring-2 ring-white" style="background-color: var(--info-blue);" title="Unassigned"></span>`;
+                            }
+
+
+                            const getInitials = (name) => name ? name.split(' ').map(n => n[0]).join('') : '';
+                            const assignedUser = mockData.staff.find(s => s.name === booking.assignedTo) || (mockData.user.name === booking.assignedTo ? mockData.user : null);
+                            let assignedToHTML = '';
+                            if (booking.assignedTo) {
+                                if (assignedUser) {
+                                     assignedToHTML = `<div class="w-6 h-6 rounded-full bg-amber-200 text-amber-800 text-xs font-bold flex items-center justify-center" title="${assignedUser.name}">${getInitials(assignedUser.name)}</div>`;
+                                } else {
+                                     assignedToHTML = `<div class="text-xs font-semibold bg-gray-100 text-gray-700 px-2 py-1 rounded-md">${booking.assignedTo}</div>`;
+                                }
+                            }
+
+                            let paymentProgressHTML = '';
+                            if(booking.invoice) {
+                                const progress = (booking.invoice.paid / booking.invoice.amount) * 100;
+                                paymentProgressHTML = `
+                                    <div class="mt-3">
+                                        <div class="flex justify-between text-xs text-gray-500 mb-1">
+                                            <span>Payment</span>
+                                            <span>₹${booking.invoice.paid.toLocaleString('en-IN')} / ₹${booking.invoice.amount.toLocaleString('en-IN')}</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                            <div class="bg-green-500 h-1.5 rounded-full" style="width: ${progress}%"></div>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+
+                            return `
                             <div class="swipe-container rounded-lg bg-white shadow-sm border">
                                 <div class="swipe-actions">
                                     <div data-action="logPayment" data-booking-id="${booking.id}" class="swipe-action-button bg-green-500"><i class="ph-currency-inr text-2xl"></i><span class="text-xs mt-1">Pay</span></div>
                                     <div data-action="navigate" data-view="client_details" data-client-id="${mockData.clients.find(c => c.name === booking.client)?.id || ''}" class="swipe-action-button bg-blue-500"><i class="ph-phone text-2xl"></i><span class="text-xs mt-1">Call</span></div>
                                 </div>
-                                <div data-action="navigate" data-view="booking_details" data-booking-id="${booking.id}" class="swipe-content bg-white p-4 rounded-lg cursor-pointer">
-                                    <p class="font-semibold" style="color: var(--neutral-text-dark);">${booking.client}</p>
-                                    <p class="text-sm" style="color: var(--neutral-text-light);">${booking.destination}</p>
-                                    <p class="text-sm font-bold mt-2" style="color: var(--success-green);">₹${booking.value.toLocaleString('en-IN')}</p>
+                                <div data-action="navigate" data-view="booking_details" data-booking-id="${booking.id}" class="swipe-content bg-white p-4 rounded-lg cursor-pointer relative">
+                                    ${indicatorHTML}
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <p class="font-semibold pr-4" style="color: var(--neutral-text-dark);">${booking.client}</p>
+                                            <p class="text-sm" style="color: var(--neutral-text-light);">${booking.destination}</p>
+                                        </div>
+                                        <p class="text-lg font-bold text-right" style="color: var(--success-green);">₹${booking.value > 0 ? booking.value.toLocaleString('en-IN') : 'N/A'}</p>
+                                    </div>
+                                    <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
+                                        <div class="flex items-center text-xs text-gray-500 space-x-3">
+                                            <span class="flex items-center"><i class="ph-calendar-blank mr-1"></i> ${new Date(booking.travelDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short'})}</span>
+                                            <span class="flex items-center"><i class="ph-users mr-1"></i> ${booking.travelers}</span>
+                                        </div>
+                                        ${assignedToHTML}
+                                    </div>
+                                    ${paymentProgressHTML}
                                 </div>
                             </div>
-                        `).join('') : `<div class="text-center text-sm text-gray-400 pt-10">No bookings in this stage.</div>`}
+                        `}).join('') : `<div class="text-center text-sm text-gray-400 pt-10">No bookings match your filters.</div>`}
                     </div>
                 </div>`;
         },
@@ -1260,11 +1574,11 @@
             ];
              return `
                 <div class="bg-white rounded-xl shadow-sm border divide-y">
-                     ${moreLinks.map(link => `
+                    ${moreLinks.map(link => `
                         <div data-action="navigate" data-view="${link.view}" class="flex items-center p-4 cursor-pointer active:bg-gray-100">
                             <i class="ph ${link.icon} text-xl text-gray-500"></i>
                             <span class="ml-4 font-medium">${link.title}</span>
-                             <i class="ph-caret-right text-gray-400 ml-auto"></i>
+                            <i class="ph-caret-right text-gray-400 ml-auto"></i>
                         </div>
                     `).join('')}
                 </div>
@@ -1293,13 +1607,13 @@
                             <button data-action="showLeaderboard" class="bg-gray-100 text-gray-700 font-bold py-2 px-4 rounded-lg text-sm">Leaderboard</button>
                         </div>
                          <div class="mt-4 flex items-center space-x-2">
-                             ${user.badges.map(badge => `<span class="text-xs font-semibold bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">${badge}</span>`).join('')}
-                         </div>
+                            ${user.badges.map(badge => `<span class="text-xs font-semibold bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">${badge}</span>`).join('')}
+                        </div>
                     </div>
 
                     <div id="supplier-list" class="bg-white p-4 rounded-xl shadow-sm border">
-                         <h2 class="text-lg font-semibold mb-3">Supplier Directory</h2>
-                         <div class="space-y-3">
+                        <h2 class="text-lg font-semibold mb-3">Supplier Directory</h2>
+                        <div class="space-y-3">
                             ${mockData.suppliers.map(s => `
                                 <div data-action="navigate" data-view="supplier_details" data-supplier-id="${s.id}" class="border rounded-lg p-3 flex items-center cursor-pointer active:bg-gray-50">
                                     <div class="flex-1">
@@ -1352,9 +1666,9 @@
                     </div>
 
                     <div class="bg-white p-4 rounded-xl shadow-sm border">
-                         <h3 class="text-lg font-bold mb-3">Leave a Review</h3>
-                         <textarea id="review-comment" placeholder="Share your experience..." class="w-full p-2 border border-gray-300 rounded-lg h-24"></textarea>
-                         <button data-action="submitReview" data-supplier-id="${supplier.id}" class="w-full mt-2 text-white font-bold py-3 px-4 rounded-lg" style="background-color: var(--primary-indigo);">Submit Review</button>
+                        <h3 class="text-lg font-bold mb-3">Leave a Review</h3>
+                        <textarea id="review-comment" placeholder="Share your experience..." class="w-full p-2 border border-gray-300 rounded-lg h-24"></textarea>
+                        <button data-action="submitReview" data-supplier-id="${supplier.id}" class="w-full mt-2 text-white font-bold py-3 px-4 rounded-lg" style="background-color: var(--primary-indigo);">Submit Review</button>
                     </div>
                 </div>
             `;
@@ -1408,15 +1722,20 @@
         render_search: function() { return this._renderSearchForm(); },
         render_search_results: function() { return this._renderSearchForm(true); },
         _renderSearchForm(showResults = false) { 
-            const { query } = this.navigationContext; 
+            const { query, smartResults } = this.navigationContext; 
             
-            let resultsHTML = '<div class="text-center py-10"><i class="ph-magnifying-glass text-4xl text-gray-300"></i><p class="mt-2 text-gray-500">Search for packages, hotels, or flights.</p></div>';
+            let resultsHTML = '<div class="text-center py-10"><i class="ph-magnifying-glass text-4xl text-gray-300"></i><p class="mt-2 text-gray-500">Search for packages, hotels, flights or suppliers.</p></div>';
             
             if (showResults) {
                 let results = [];
-                const lowerQuery = query.toLowerCase();
+                const lowerQuery = query ? query.toLowerCase() : '';
+
                 if (this.searchTab === 'Packages') {
-                    results = mockData.searchResults.filter(p => query && (p.title.toLowerCase().includes(lowerQuery) || p.details.toLowerCase().includes(lowerQuery)));
+                    if (smartResults) {
+                         results = mockData.searchResults.filter(p => smartResults.includes(p.id));
+                    } else {
+                         results = mockData.searchResults.filter(p => query && (p.title.toLowerCase().includes(lowerQuery) || p.details.toLowerCase().includes(lowerQuery)));
+                    }
                     resultsHTML = results.length > 0 ? results.map(r => `<div class="bg-white rounded-lg shadow-sm border overflow-hidden mb-4"><img src="${r.img}" class="w-full h-40 object-cover" /><div class="p-4"><div class="flex justify-between items-start"><h3 class="text-md font-semibold">${r.title}</h3><div class="flex items-center font-bold text-sm text-amber-500"><i class="ph-star-fill"></i><span class="ml-1">${r.rating}</span></div></div><p class="text-xs mt-1 text-gray-500">${r.details}</p><div class="flex justify-between items-center mt-3"><p class="text-lg font-bold text-green-600">₹${r.price.toLocaleString('en-IN')}</p><button data-action="buildItinerary" data-package-id="${r.id}" class="text-white text-sm font-bold py-2 px-4 rounded-lg bg-amber-500">View</button></div></div></div>`).join('') : '<p class="text-center text-gray-500 py-10">No packages found.</p>';
                 } else if (this.searchTab === 'Hotels') {
                     results = mockData.hotels.filter(h => query && h.destination.toLowerCase().includes(lowerQuery));
@@ -1424,11 +1743,30 @@
                 } else if (this.searchTab === 'Flights') {
                     results = mockData.flights.filter(f => query && f.to.toLowerCase().includes(lowerQuery));
                     resultsHTML = results.length > 0 ? results.map(f => `<div class="bg-white rounded-lg shadow-sm border p-4 mb-4"><div class="flex items-center"><img src="${f.img}" class="w-8 h-8 mr-3"/><div class="flex-1"><p class="font-semibold text-sm">${f.airline}</p><p class="text-xs text-gray-500">${f.from} to ${f.to}</p></div><p class="font-bold text-green-600">₹${f.price.toLocaleString('en-IN')}</p></div></div>`).join('') : '<p class="text-center text-gray-500 py-10">No flights found.</p>';
+                } else if (this.searchTab === 'Suppliers') {
+                    results = mockData.suppliers.filter(s => query && s.name.toLowerCase().includes(lowerQuery));
+                    resultsHTML = results.length > 0 ? results.map(s => `<div data-action="navigate" data-view="supplier_details" data-supplier-id="${s.id}" class="bg-white border rounded-lg p-3 flex items-center cursor-pointer active:bg-gray-50 mb-3"><div class="flex-1"><p class="font-semibold text-sm">${s.name} ${s.verified ? '<i class="ph-seal-check-fill text-blue-500"></i>' : ''}</p><p class="text-xs text-gray-500">${s.service}</p></div><div class="text-right"><p class="font-bold text-lg text-indigo-600">${s.trustScore}<span class="text-xs">/100</span></p><p class="text-xs text-gray-500">${s.reviews} reviews</p></div></div>`).join('') : '<p class="text-center text-gray-500 py-10">No suppliers found.</p>';
                 }
             }
 
             return `<div class="space-y-4">
-                        <div class="bg-gray-100 rounded-lg p-1 flex items-center text-sm">${['Packages','Hotels','Flights'].map(t => `<button data-action="changeSearchTab" data-tab="${t}" class="search-tab flex-1 text-center font-medium py-1.5 px-2 rounded-md ${this.searchTab===t ? 'active':''}">${t}</button>`).join('')}</div>
+                        <div class="bg-gray-100 rounded-lg p-1 flex items-center text-sm">
+                            ${['Packages','Hotels','Flights', 'Suppliers'].map(t => `<button data-action="changeSearchTab" data-tab="${t}" class="search-tab flex-1 text-center font-medium py-1.5 px-2 rounded-md ${this.searchTab===t ? 'active':''}">${t}</button>`).join('')}
+                             <button data-action="showSearchFilters" class="ml-2 flex-shrink-0 bg-white text-gray-500 p-2 rounded-full shadow-sm border">
+                                <i class="ph-funnel text-lg"></i>
+                            </button>
+                        </div>
+
+                         <div class="bg-white p-4 rounded-xl shadow-sm border">
+                            <h3 class="text-md font-semibold text-purple-600 mb-2">✨ Smart Search</h3>
+                             <div class="relative">
+                               <input type="text" id="smart-search-input" placeholder="e.g. weekend adventure trip under 1L" class="w-full pr-12 pl-4 py-2.5 border rounded-lg">
+                               <button id="smart-search-btn" data-action="performSmartSearch" class="absolute right-2 top-1/2 -translate-y-1/2 text-indigo-600 p-1 rounded-full hover:bg-indigo-100">
+                                   <i class="ph-paper-plane-tilt text-2xl"></i>
+                               </button>
+                            </div>
+                         </div>
+
                         <div class="bg-white p-4 rounded-xl shadow-sm border">
                             <div class="${this.searchTab === 'Packages' ? '' : 'hide'}"><input type="text" id="package-search-input" value="${query||''}" placeholder="e.g., Manali trip" class="w-full px-4 py-2.5 border rounded-lg"></div>
                             <div class="${this.searchTab === 'Hotels' ? '' : 'hide'}"><input type="text" id="hotel-search-input" value="${query||''}" placeholder="e.g., Manali" class="w-full px-4 py-2.5 border rounded-lg"></div>
@@ -1439,8 +1777,17 @@
                                     <input type="date" id="flight-date-input" class="w-full px-4 py-2.5 border rounded-lg text-gray-500">
                                 </div>
                             </div>
+                            <div class="${this.searchTab === 'Suppliers' ? '' : 'hide'}"><input type="text" id="supplier-search-input" value="${query||''}" placeholder="e.g., Jaipur Royal Cabs" class="w-full px-4 py-2.5 border rounded-lg"></div>
                             <button data-action="performSearch" class="w-full mt-3 text-white font-bold py-3 rounded-lg bg-indigo-600">Search</button>
                         </div>
+
+                        <div id="recent-searches" class="pt-2">
+                            <h3 class="text-sm font-semibold text-gray-500 mb-2">Recent Searches</h3>
+                            <div class="flex flex-wrap gap-2">
+                                ${mockData.recentSearches.map(s => `<button class="text-xs bg-gray-200 text-gray-700 px-3 py-1 rounded-full">${s}</button>`).join('')}
+                            </div>
+                        </div>
+
                         <div id="search-results-container" class="pt-4">${resultsHTML}</div>
                     </div>`;
         },
@@ -1454,8 +1801,8 @@
                     </div>
 
                     <div class="bg-white p-4 rounded-xl shadow-sm border">
-                         <h3 class="text-lg font-bold mb-3">Day-wise Plan</h3>
-                         <div class="space-y-2">
+                        <h3 class="text-lg font-bold mb-3">Day-wise Plan</h3>
+                        <div class="space-y-2">
                             ${this.currentItinerary.dayWisePlan.map((day, index) => {
                                 const hotel = mockData.hotels.find(h => h.id === day.hotelId);
                                 return `
@@ -1473,7 +1820,7 @@
                                 </div>
                                 `
                             }).join('')}
-                         </div>
+                        </div>
                     </div>
                     
                     <div class="bg-white p-4 rounded-xl shadow-sm border">
@@ -1561,9 +1908,9 @@
                                 <h2 class="text-xl font-bold">${booking.destination} Trip for ${booking.client}</h2>
                                 <p class="text-sm text-gray-500">Booking ID: ${booking.id}</p>
                             </div>
-                             <button data-action="showEditBookingModal" data-booking-id="${booking.id}" class="text-indigo-600"><i class="ph-pencil-simple text-xl"></i></button>
+                            <button data-action="showEditBookingModal" data-booking-id="${booking.id}" class="text-indigo-600"><i class="ph-pencil-simple text-xl"></i></button>
                         </div>
-                         ${booking.value > 0 ? `<p class="text-2xl font-bold mt-2 text-green-600">₹${booking.value.toLocaleString('en-IN')}</p>` : ''}
+                        ${booking.value > 0 ? `<p class="text-2xl font-bold mt-2 text-green-600">₹${booking.value.toLocaleString('en-IN')}</p>` : ''}
                     </div>
                      <div class="bg-white p-4 rounded-xl shadow-sm border">
                         <h3 class="text-lg font-bold mb-3">Assignment</h3>
@@ -1576,11 +1923,11 @@
                     </div>
                     ${booking.status === 'Inquiry' ? `
                     <div class="bg-white p-4 rounded-xl shadow-sm border">
-                         <h3 class="text-lg font-bold mb-3">Next Steps</h3>
-                         <div class="space-y-3">
+                        <h3 class="text-lg font-bold mb-3">Next Steps</h3>
+                        <div class="space-y-3">
                             <button data-action="buildQuoteFromInquiry" data-booking-id="${booking.id}" class="w-full text-white font-bold py-3 rounded-lg bg-green-500">Build from Package</button>
                             <button data-action="createCustomItinerary" data-booking-id="${booking.id}" class="w-full text-indigo-600 font-bold py-3 rounded-lg bg-indigo-100">Create Custom Itinerary</button>
-                         </div>
+                        </div>
                     </div>` : ''}
                     <div class="bg-white p-4 rounded-xl shadow-sm border">
                         <h3 class="text-lg font-bold mb-3">Finance</h3>
@@ -1606,7 +1953,7 @@
             `;
         },
         render_analytics() { 
-             const analysis = mockData.analyticsData.pricingAnalysis['PKG_MANALI_01'];
+            const analysis = mockData.analyticsData.pricingAnalysis['PKG_MANALI_01'];
             return `
                 <div class="space-y-6">
                     <div class="bg-white p-4 rounded-xl shadow-sm border">
@@ -1648,33 +1995,33 @@
             else clientList = pastClients;
 
             return `
-                 <div class="flex flex-col h-full">
-                    <div class="bg-gray-100 rounded-lg p-1 flex items-center text-sm mb-4">
-                        <button data-action="changeClientsTab" data-tab="Active" class="clients-tab flex-1 text-center font-medium py-1.5 px-2 rounded-md ${this.clientsTab==='Active' ? 'active':''}">${activeClients.length} Active</button>
-                        <button data-action="changeClientsTab" data-tab="Upcoming" class="clients-tab flex-1 text-center font-medium py-1.5 px-2 rounded-md ${this.clientsTab==='Upcoming' ? 'active':''}">${upcomingClients.length} Upcoming</button>
-                        <button data-action="changeClientsTab" data-tab="Past" class="clients-tab flex-1 text-center font-medium py-1.5 px-2 rounded-md ${this.clientsTab==='Past' ? 'active':''}">${pastClients.length} Past</button>
-                    </div>
-                     <div class="space-y-3">
-                        ${clientList.length > 0 ? clientList.map(b => {
-                            const client = mockData.clients.find(c => c.name === b.client);
-                            return `
-                                <div class="bg-white rounded-lg shadow-sm border p-3">
-                                    <div class="flex justify-between items-start">
-                                        <div>
-                                            <p class="font-semibold">${b.client}</p>
-                                            <p class="text-xs text-gray-500">${b.destination} Trip</p>
+                    <div class="flex flex-col h-full">
+                        <div class="bg-gray-100 rounded-lg p-1 flex items-center text-sm mb-4">
+                            <button data-action="changeClientsTab" data-tab="Active" class="clients-tab flex-1 text-center font-medium py-1.5 px-2 rounded-md ${this.clientsTab==='Active' ? 'active':''}">${activeClients.length} Active</button>
+                            <button data-action="changeClientsTab" data-tab="Upcoming" class="clients-tab flex-1 text-center font-medium py-1.5 px-2 rounded-md ${this.clientsTab==='Upcoming' ? 'active':''}">${upcomingClients.length} Upcoming</button>
+                            <button data-action="changeClientsTab" data-tab="Past" class="clients-tab flex-1 text-center font-medium py-1.5 px-2 rounded-md ${this.clientsTab==='Past' ? 'active':''}">${pastClients.length} Past</button>
+                        </div>
+                         <div class="space-y-3">
+                            ${clientList.length > 0 ? clientList.map(b => {
+                                const client = mockData.clients.find(c => c.name === b.client);
+                                return `
+                                    <div class="bg-white rounded-lg shadow-sm border p-3">
+                                        <div class="flex justify-between items-start">
+                                            <div>
+                                                <p class="font-semibold">${b.client}</p>
+                                                <p class="text-xs text-gray-500">${b.destination} Trip</p>
+                                            </div>
+                                            <button data-action="setReminder" data-client-name="${b.client}" class="text-xs font-semibold text-indigo-600 bg-indigo-100 px-2 py-1 rounded-md">Set Reminder</button>
                                         </div>
-                                        <button data-action="setReminder" data-client-name="${b.client}" class="text-xs font-semibold text-indigo-600 bg-indigo-100 px-2 py-1 rounded-md">Set Reminder</button>
+                                        <div class="flex justify-between items-center mt-3 text-xs border-t pt-2">
+                                            <span class="font-medium text-gray-600">Travel Date:</span>
+                                            <span class="font-bold">${new Date(b.travelDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
+                                        </div>
                                     </div>
-                                    <div class="flex justify-between items-center mt-3 text-xs border-t pt-2">
-                                        <span class="font-medium text-gray-600">Travel Date:</span>
-                                        <span class="font-bold">${new Date(b.travelDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
-                                    </div>
-                                </div>
-                            `
-                        }).join('') : `<div class="text-center text-sm text-gray-400 pt-10">No clients in this category.</div>`}
-                     </div>
-                </div>
+                                `
+                            }).join('') : `<div class="text-center text-sm text-gray-400 pt-10">No clients in this category.</div>`}
+                         </div>
+                    </div>
             `;
         },
         render_client_details() {
@@ -1697,8 +2044,8 @@
                         </div>
                     </div>
                     <div class="bg-white p-4 rounded-xl shadow-sm border">
-                         <h3 class="text-lg font-bold mb-3">Communication Log</h3>
-                         <div class="space-y-3">
+                        <h3 class="text-lg font-bold mb-3">Communication Log</h3>
+                        <div class="space-y-3">
                             ${client.communication.map(log => `
                                 <div>
                                     <p class="text-xs text-gray-500">${new Date(log.date).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</p>
@@ -1736,8 +2083,8 @@
                                     <h3 class="font-semibold text-sm">${deal.title}</h3>
                                     <p class="text-xs text-gray-500 mt-1">${deal.description}</p>
                                     <div class="mt-2 flex justify-between items-center">
-                                         <span class="font-bold text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full text-xs">${deal.discount}</span>
-                                         <button data-action="buildItinerary" data-package-id="${deal.packageId}" class="text-xs font-bold text-amber-600">Book Now</button>
+                                        <span class="font-bold text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full text-xs">${deal.discount}</span>
+                                        <button data-action="buildItinerary" data-package-id="${deal.packageId}" class="text-xs font-bold text-amber-600">Book Now</button>
                                     </div>
                                 </div>
                             </div>
@@ -1810,9 +2157,9 @@
                         </div>
                     </div>
                      <div class="bg-white p-4 rounded-xl shadow-sm border">
-                         <h3 class="text-lg font-bold mb-3">Communication Hub</h3>
-                         <textarea id="crisis-communication-textarea" placeholder="Type message or generate an AI draft..." class="w-full p-2 border rounded-lg h-24"></textarea>
-                         <button id="draft-crisis-update-btn" data-action="draftCrisisUpdate" class="w-full mt-2 text-white font-bold py-3 rounded-lg bg-indigo-600">✨ Draft Crisis Update</button>
+                        <h3 class="text-lg font-bold mb-3">Communication Hub</h3>
+                        <textarea id="crisis-communication-textarea" placeholder="Type message or generate an AI draft..." class="w-full p-2 border rounded-lg h-24"></textarea>
+                        <button id="draft-crisis-update-btn" data-action="draftCrisisUpdate" class="w-full mt-2 text-white font-bold py-3 rounded-lg bg-indigo-600">✨ Draft Crisis Update</button>
                     </div>
                 </div>
             `;
@@ -1901,7 +2248,7 @@
             } else if (this.teamHubTab === 'Manage') {
                  content = `
                     <div class="bg-white p-4 rounded-xl shadow-sm border">
-                         <div class="flex justify-between items-center mb-4">
+                        <div class="flex justify-between items-center mb-4">
                             <h3 class="text-lg font-bold">Manage Staff</h3>
                             <button data-action="addNewStaff" class="text-sm font-bold text-white py-2 px-3 rounded-lg bg-indigo-600">Add New</button>
                         </div>
@@ -1941,8 +2288,8 @@
                         <p class="text-sm text-gray-500">${staff.role} - ${staff.team || 'Management'}</p>
                     </div>
                     <div class="grid grid-cols-2 gap-4 text-center">
-                         <div class="bg-white p-4 rounded-xl shadow-sm border"><p class="text-xs text-gray-500">Deals Closed</p><p class="text-3xl font-bold text-green-500">${staff.stats?.closed || 0}</p></div>
-                         <div class="bg-white p-4 rounded-xl shadow-sm border"><p class="text-xs text-gray-500">Avg. Margin</p><p class="text-3xl font-bold text-indigo-500">${staff.stats?.margin || 0}%</p></div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border"><p class="text-xs text-gray-500">Deals Closed</p><p class="text-3xl font-bold text-green-500">${staff.stats?.closed || 0}</p></div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border"><p class="text-xs text-gray-500">Avg. Margin</p><p class="text-3xl font-bold text-indigo-500">${staff.stats?.margin || 0}%</p></div>
                     </div>
                     <div class="bg-white p-4 rounded-xl shadow-sm border text-center">
                         <p class="text-xs text-gray-500">Total Revenue Generated</p>
@@ -1989,6 +2336,7 @@
             `;
         },
     };
+
     document.addEventListener('DOMContentLoaded', () => {
         app.init();
     });
