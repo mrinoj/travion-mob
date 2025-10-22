@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Travacations - B2B Travel Platform</title>
+    <!-- Viewport updated for proper responsive behavior -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travion by Travacations - B2B Travel Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,6 +15,8 @@
         body {
             font-family: 'Inter', sans-serif;
             -webkit-tap-highlight-color: transparent;
+            /* Use a consistent background for all screen sizes */
+            background-color: var(--neutral-bg);
         }
         h1, h2, h3, h4, h5, h6 {
             font-family: 'Poppins', sans-serif;
@@ -28,7 +31,7 @@
             --danger-red: #EF4444;
             --warning-orange: #F97316;
             --info-blue: #3B82F6;
-            --neutral-bg: #F8FAFC; /* Lighter gray for mobile */
+            --neutral-bg: #F8FAFC; /* slate-50, good for both */
             --neutral-text-light: #64748B;
             --neutral-text-dark: #0F172A;
         }
@@ -145,6 +148,53 @@
             background-size: 400% 400%;
             animation: aurora 15s ease infinite;
         }
+
+        /* ============================================= */
+        /* ============ NEW DESKTOP STYLES ============= */
+        /* ============================================= */
+        @media (min-width: 1024px) {
+            /* Desktop Sidebar */
+            .sidebar-link.active {
+                background-color: var(--primary-indigo);
+                color: white;
+                box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            }
+            .sidebar-link.active i {
+                color: white !important;
+            }
+            .sidebar-link:not(.active):hover {
+                background-color: #f1f5f9; /* slate-100 */
+            }
+
+            /* Desktop Modals (Centered) */
+            @keyframes fadeInDesktop { 
+                from { opacity: 0; transform: scale(0.95); } 
+                to { opacity: 1; transform: scale(1); } 
+            }
+
+            .modal-overlay {
+                display: flex;
+                align-items: flex-start; /* Align to top */
+                justify-content: center;
+                overflow-y: auto;
+            }
+
+            .modal-content {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                right: auto;
+                max-width: 42rem; /* max-w-2xl */
+                width: 100%;
+                border-radius: 0.75rem; /* rounded-xl */
+                box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+                animation: fadeInDesktop 0.2s ease-out forwards;
+                margin-top: 5rem; /* my-20 */
+                margin-bottom: 5rem;
+                /* Reset mobile bottom-sheet styles */
+                transform: none; 
+            }
+        }
     </style>
 </head>
 <body class="bg-neutral-bg">
@@ -161,7 +211,7 @@
                     <div class="inline-block p-4 rounded-full" style="background-color: var(--primary-slate);">
                         <i class="ph-airplane-takeoff text-5xl text-white"></i>
                     </div>
-                    <h1 class="text-4xl font-bold mt-4" style="color: var(--neutral-text-dark);">Travacations</h1>
+                    <h1 class="text-4xl font-bold mt-4" style="color: var(--neutral-text-dark);">Travion</h1>
                     <p style="color: var(--neutral-text-light);" class="mt-2">The Future of B2B Travel</p>
                 </div>
 
@@ -182,36 +232,116 @@
         <!-- ====================================================== -->
         <!-- =================== MAIN APP SHELL =================== -->
         <!-- ====================================================== -->
-        <div id="page-main" class="hide flex flex-col h-screen" style="background-color: var(--neutral-bg);">
-            <!-- Header -->
-            <header id="main-header" class="bg-white/80 backdrop-blur-md p-4 flex justify-between items-center z-10 border-b border-gray-200/80 sticky top-0">
-                <div class="flex items-center">
-                    <button id="back-button" class="hide mr-2 text-gray-500 hover:text-gray-900 p-1 rounded-full hover:bg-gray-200">
-                        <i class="ph-arrow-left text-2xl"></i>
+        <!-- Main page container updated to a flex-row on desktop -->
+        <div id="page-main" class="hide flex flex-col lg:flex-row h-screen" style="background-color: var(--neutral-bg);">
+
+            <!-- ====================================================== -->
+            <!-- =================== DESKTOP SIDEBAR ================== -->
+            <!-- ====================================================== -->
+            <nav id="desktop-sidebar" class="hidden lg:flex flex-col w-64 h-screen bg-white border-r border-gray-200 fixed top-0 left-0 z-20 p-4">
+                <!-- Sidebar Header -->
+                <div class="flex items-center space-x-2 p-2 mb-4">
+                    <div class="inline-block p-3 rounded-lg" style="background-color: var(--primary-slate);">
+                        <i class="ph-airplane-takeoff text-3xl text-white"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold" style="color: var(--neutral-text-dark);">Travion</h1>
+                </div>
+                
+                <!-- Sidebar Actions (Replaces FAB) -->
+                <div class="space-y-2 mb-4">
+                    <button data-action="newBooking" class="w-full flex items-center justify-center text-white font-bold py-2.5 px-4 rounded-lg transition-all hover:opacity-90" style="background-color: var(--primary-indigo);">
+                        <i class="ph-briefcase text-xl mr-2"></i> New Booking
                     </button>
-                    <div>
-                        <div id="breadcrumb-container" class="text-xs text-gray-500 truncate"></div>
-                        <h1 id="header-title" class="text-xl font-bold" style="color: var(--neutral-text-dark);">Dashboard</h1>
-                    </div>
+                    <button data-action="newItinerary" class="w-full flex items-center justify-center text-indigo-700 font-bold py-2.5 px-4 rounded-lg bg-indigo-100 hover:bg-indigo-200">
+                        <i class="ph-scroll text-xl mr-2"></i> New Itinerary
+                    </button>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <div id="crisis-alert-icon" class="relative cursor-pointer hide">
-                        <i class="ph-bell-ringing text-2xl" style="color: var(--danger-red);"></i>
-                        <span class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-white" style="background-color: var(--danger-red);"></span>
-                    </div>
-                    <div id="profile-button" class="flex items-center space-x-2 cursor-pointer">
-                        <img src="https://placehold.co/40x40/F59E0B/FFFFFF?text=RK" class="w-9 h-9 rounded-full" alt="User Avatar">
-                    </div>
+                
+                <!-- Sidebar Navigation -->
+                <div class="flex-1 overflow-y-auto space-y-1">
+                    <button data-view="dashboard" class="sidebar-link bottom-nav-link w-full flex items-center p-3 rounded-lg text-gray-600 font-medium">
+                        <i class="ph-house text-xl mr-3 text-gray-500"></i><span>Dashboard</span>
+                    </button>
+                    <button data-view="bookings" class="sidebar-link bottom-nav-link w-full flex items-center p-3 rounded-lg text-gray-600 font-medium">
+                        <i class="ph-briefcase text-xl mr-3 text-gray-500"></i><span>Bookings</span>
+                    </button>
+                    <button data-view="search" class="sidebar-link bottom-nav-link w-full flex items-center p-3 rounded-lg text-gray-600 font-medium">
+                        <i class="ph-magnifying-glass text-xl mr-3 text-gray-500"></i><span>Search</span>
+                    </button>
+                    <button data-view="marketplace" class="sidebar-link bottom-nav-link w-full flex items-center p-3 rounded-lg text-gray-600 font-medium">
+                        <i class="ph-storefront text-xl mr-3 text-gray-500"></i><span>Deals</span>
+                    </button>
+                    <hr class="my-2">
+                    <h4 class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Workspace</h4>
+                    <button data-view="team_hub" class="sidebar-link bottom-nav-link w-full flex items-center p-3 rounded-lg text-gray-600 font-medium">
+                        <i class="ph-users-three text-xl mr-3 text-gray-500"></i><span>Team Hub</span>
+                    </button>
+                    <button data-view="clients" class="sidebar-link bottom-nav-link w-full flex items-center p-3 rounded-lg text-gray-600 font-medium">
+                        <i class="ph-users text-xl mr-3 text-gray-500"></i><span>Clients</span>
+                    </button>
+                    <button data-view="trust_hub" class="sidebar-link bottom-nav-link w-full flex items-center p-3 rounded-lg text-gray-600 font-medium">
+                        <i class="ph-handshake text-xl mr-3 text-gray-500"></i><span>Trust Hub</span>
+                    </button>
+                    <button data-view="finance" class="sidebar-link bottom-nav-link w-full flex items-center p-3 rounded-lg text-gray-600 font-medium">
+                        <i class="ph-currency-inr text-xl mr-3 text-gray-500"></i><span>Finance</span>
+                    </button>
+                    <button data-view="analytics" class="sidebar-link bottom-nav-link w-full flex items-center p-3 rounded-lg text-gray-600 font-medium">
+                        <i class="ph-chart-bar text-xl mr-3 text-gray-500"></i><span>Analytics</span>
+                    </button>
                 </div>
-            </header>
+                
+                <!-- Sidebar Footer -->
+                <div class="mt-auto pt-4 border-t">
+                    <button data-view="walkthrough" class="sidebar-link bottom-nav-link w-full flex items-center p-3 rounded-lg text-gray-600 font-medium">
+                        <i class="ph-info text-xl mr-3 text-gray-500"></i><span>How to Use</span>
+                    </button>
+                    <button data-action="logout" class="w-full flex items-center p-3 rounded-lg text-red-600 font-medium hover:bg-red-50">
+                        <i class="ph-sign-out text-xl mr-3"></i><span>Logout</span>
+                    </button>
+                </div>
+            </nav>
+            
+            <!-- Main Content Area (Mobile + Desktop) -->
+            <!-- This div wraps the header and main content for desktop layout -->
+            <div class="flex-1 flex flex-col h-screen lg:ml-64">
+                <!-- Header -->
+                <!-- Updated with desktop margin and width -->
+                <header id="main-header" class="bg-white/80 backdrop-blur-md p-4 flex justify-between items-center z-10 border-b border-gray-200/80 sticky top-0 lg:w-full">
+                    <div class="flex items-center">
+                        <button id="back-button" class="hide mr-2 text-gray-500 hover:text-gray-900 p-1 rounded-full hover:bg-gray-200">
+                            <i class="ph-arrow-left text-2xl"></i>
+                        </button>
+                        <div>
+                            <!-- Breadcrumbs for desktop, hidden on mobile -->
+                            <div id="breadcrumb-container" class="text-xs text-gray-500 truncate hidden lg:block"></div>
+                            <h1 id="header-title" class="text-xl font-bold" style="color: var(--neutral-text-dark);">Dashboard</h1>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div id="crisis-alert-icon" class="relative cursor-pointer hide">
+                            <i class="ph-bell-ringing text-2xl" style="color: var(--danger-red);"></i>
+                            <span class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-white" style="background-color: var(--danger-red);"></span>
+                        </div>
+                        <div id="profile-button" class="flex items-center space-x-2 cursor-pointer">
+                            <img src="https://placehold.co/40x40/F59E0B/FFFFFF?text=RK" class="w-9 h-9 rounded-full" alt="User Avatar">
+                        </div>
+                    </div>
+                </header>
 
-            <!-- Main Content -->
-            <main id="main-content" class="flex-1 overflow-y-auto p-4 pb-24">
-                <!-- Content will be injected here -->
-            </main>
+                <!-- Main Content -->
+                <!-- Updated with desktop padding -->
+                <main id="main-content" class="flex-1 overflow-y-auto p-4 lg:p-6 pb-24 lg:pb-6">
+                    <!-- Content will be injected here -->
+                </main>
+            </div>
 
-            <!-- FAB -->
-            <div id="fab-container" class="fab-container">
+
+            <!-- ====================================================== -->
+            <!-- =============== MOBILE-ONLY ELEMENTS ================= -->
+            <!-- ====================================================== -->
+
+            <!-- FAB (Hidden on Desktop) -->
+            <div id="fab-container" class="fab-container lg:hidden">
                     <div id="fab-actions" class="fab-actions">
                         <div data-action="newBooking" class="fab-action cursor-pointer">
                             <span class="mr-2">New Booking</span> <i class="ph-briefcase text-xl text-indigo-600"></i>
@@ -226,8 +356,8 @@
             </div>
 
 
-            <!-- Bottom Navigation -->
-            <footer class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200/80 flex justify-around p-2 z-10">
+            <!-- Bottom Navigation (Hidden on Desktop) -->
+            <footer class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200/80 flex justify-around p-2 z-10 lg:hidden">
                     <button data-view="dashboard" class="bottom-nav-link flex flex-col items-center text-gray-500 w-full py-1 rounded-md">
                         <i class="ph-fill ph-house text-2xl"></i><span class="text-xs mt-1">Dashboard</span>
                     </button>
@@ -247,7 +377,7 @@
 
             <!-- Modal and Toast Container -->
             <div id="modal-container" class="hide"></div>
-            <div id="toast-container" class="fixed bottom-20 right-4 z-[2000] space-y-2"></div>
+            <div id="toast-container" class="fixed bottom-20 lg:bottom-6 right-4 z-[2000] space-y-2"></div>
         </div>
     </div>
     
@@ -354,6 +484,7 @@
         headerTitle: null, crisisAlertIcon: null, modalContainer: null, 
         toastContainer: null, profileButton: null, backButton: null, 
         breadcrumbContainer: null, mainHeader: null, bottomNavLinks: null,
+        desktopSidebarLinks: null, // New element
         fab: null, fabActions: null,
         charts: {},
 
@@ -395,13 +526,21 @@
             this.backButton = document.getElementById('back-button');
             this.breadcrumbContainer = document.getElementById('breadcrumb-container');
             this.mainHeader = document.getElementById('main-header');
-            this.bottomNavLinks = document.querySelectorAll('.bottom-nav-link');
+            
+            // Mobile and Desktop Nav Links
+            this.bottomNavLinks = document.querySelectorAll('footer .bottom-nav-link');
+            this.desktopSidebarLinks = document.querySelectorAll('#desktop-sidebar .bottom-nav-link');
+
             this.fab = document.getElementById('fab');
             this.fabActions = document.getElementById('fab-actions');
             
             this.loginButton.addEventListener('click', () => this.login());
             this.backButton.addEventListener('click', () => this.goBack());
+            
+            // Add listeners to both mobile and desktop navs
             this.bottomNavLinks.forEach(link => link.addEventListener('click', (e) => this.navigate(e.currentTarget.dataset.view)));
+            this.desktopSidebarLinks.forEach(link => link.addEventListener('click', (e) => this.navigate(e.currentTarget.dataset.view)));
+            
             this.crisisAlertIcon.addEventListener('click', () => this.navigate('crisis'));
             this.profileButton.addEventListener('click', () => this.navigate('profile'));
             this.fab.addEventListener('click', () => this.toggleFab());
@@ -503,6 +642,13 @@
         handleModalClick(e) {
             const target = e.target.closest('[data-action]');
             if (!target) return;
+            
+            // Handle clicking the overlay to close
+            if (target.classList.contains('modal-overlay') && target.dataset.action === 'closeModal') {
+                this.closeModal();
+                return;
+            }
+
             const params = { ...target.dataset };
             switch(params.action) {
                 case 'closeModal': this.closeModal(); break;
@@ -527,8 +673,12 @@
         },
 
         navigate(view, context = {}, isBack = false) {
+            // Top level views for navigation history reset
             const topLevelViews = ['dashboard', 'bookings', 'search', 'marketplace', 'more'];
-            const isTopLevelNav = topLevelViews.includes(view);
+            // Include desktop-only top level views
+            const desktopTopLevel = ['team_hub', 'clients', 'trust_hub', 'finance', 'analytics'];
+            
+            const isTopLevelNav = topLevelViews.includes(view) || desktopTopLevel.includes(view);
 
             if (!isBack) {
                 if (isTopLevelNav) {
@@ -584,11 +734,33 @@
             this.headerTitle.textContent = this.getPageTitle(this.currentView);
 
             let mainView = this.currentView;
-            if(!['dashboard', 'bookings', 'search', 'marketplace', 'more'].includes(mainView)) {
-                mainView = this.navigationHistory[0]?.view || 'dashboard';
+            
+            // Find the top-level parent view
+            const allTopLevelViews = ['dashboard', 'bookings', 'search', 'marketplace', 'more', 'team_hub', 'clients', 'trust_hub', 'finance', 'analytics'];
+            if(!allTopLevelViews.includes(mainView)) {
+                // Look back in history for the last top-level view
+                const lastTopLevel = [...this.navigationHistory].reverse().find(s => allTopLevelViews.includes(s.view));
+                mainView = lastTopLevel ? lastTopLevel.view : 'dashboard';
             }
             
+            // Update mobile nav
             this.bottomNavLinks.forEach(link => link.classList.toggle('active', link.dataset.view === mainView));
+            
+            // Update desktop nav
+            if (this.desktopSidebarLinks) {
+                this.desktopSidebarLinks.forEach(link => {
+                    link.classList.toggle('active', link.dataset.view === mainView);
+                    const icon = link.querySelector('i');
+                    if (icon) {
+                        // Toggle ph-fill based on active state
+                        if (link.dataset.view === mainView) {
+                            icon.classList.add('ph-fill');
+                        } else {
+                            icon.classList.remove('ph-fill');
+                        }
+                    }
+                });
+            }
             
             if (this.currentView === 'crisis') {
                 this.crisisAlertIcon.classList.add('hide');
@@ -658,7 +830,7 @@
                     activeElement = target;
                     activeElement.style.transition = 'none';
                 }
-            });
+            }, { passive: true });
 
             this.mainContent.addEventListener('touchmove', (e) => {
                 if (!activeElement) return;
@@ -667,7 +839,7 @@
                 if (diff < 0 && diff > -160) {
                     activeElement.style.transform = `translateX(${diff}px)`;
                 }
-            });
+            }, { passive: true });
 
             this.mainContent.addEventListener('touchend', () => {
                 if (!activeElement) return;
@@ -829,7 +1001,7 @@
             if (!booking || !booking.invoice) return;
             const remaining = booking.invoice.amount - booking.invoice.paid;
             const modalContent = `
-                <div class="modal-content fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
+                <div class="modal-content bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
                     <h3 class="text-lg font-bold mb-4">Log Payment for ${booking.invoice.id}</h3>
                     <p class="text-sm">Amount Due: ₹${remaining.toLocaleString('en-IN')}</p>
                     <input type="number" id="payment-amount" placeholder="Enter amount" class="w-full mt-2 px-4 py-2 rounded-lg border border-gray-300">
@@ -875,7 +1047,7 @@
         },
         showHotelOptions(dayIndex) {
             const modalContent = `
-                <div class="modal-content fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
+                <div class="modal-content bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
                     <h3 class="text-lg font-bold mb-4">Change Hotel for Day ${dayIndex+1}</h3>
                     <div class="space-y-3 max-h-[50vh] overflow-y-auto">
                         ${mockData.hotels.map(h => `<div class="border rounded-lg p-3 flex items-center"><div class="flex-1"><p class="font-semibold">${h.name}</p><p class="text-xs text-gray-500">${h.rating} ★ | ₹${h.price.toLocaleString('en-IN')}</p></div><button data-action="selectHotel" data-day-index="${dayIndex}" data-hotel-id="${h.id}" class="text-sm font-bold text-white py-2 px-4 rounded-lg bg-indigo-600">Select</button></div>`).join('')}
@@ -902,7 +1074,7 @@
         showClientSelectionForItinerary(packageId) {
             const inquiryBookings = mockData.bookings.filter(b => b.status === 'Inquiry' || b.status === 'Quoted');
             const modalContent = `
-                    <div class="modal-content fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
+                    <div class="modal-content bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
                         <h3 class="text-lg font-bold mb-4">Who is this itinerary for?</h3>
                         <div class="space-y-2 max-h-[50vh] overflow-y-auto">
                             <button data-action="selectClientForItinerary" data-package-id="${packageId || ''}" data-booking-id="new" class="w-full text-left p-3 bg-indigo-100 text-indigo-700 rounded-lg font-medium">A New Client</button>
@@ -962,7 +1134,7 @@
             }
 
             const modalHTML = `
-                <div class="modal-content fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
+                <div class="modal-content bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
                     ${content}
                     <div class="mt-6 flex justify-between">
                         <button data-action="prevBookingStep" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg ${this.newBookingState.step === 1 ? 'invisible' : ''}">Back</button>
@@ -1015,7 +1187,7 @@
         },
         showAssignModal(bookingId) {
             const modalContent = `
-                <div class="modal-content fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
+                <div class="modal-content bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
                     <h3 class="text-lg font-bold mb-4">Assign to Team</h3>
                     <div class="space-y-2">
                         ${mockData.teams.map(team => `<button data-action="assignToTeam" data-booking-id="${bookingId}" data-team-name="${team}" class="w-full text-left p-3 bg-gray-100 rounded-lg font-medium">${team}</button>`).join('')}
@@ -1035,7 +1207,7 @@
         showEditBookingModal(bookingId) {
             const booking = mockData.bookings.find(b => b.id === bookingId);
             const modalContent = `
-                <div class="modal-content fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
+                <div class="modal-content bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
                     <h3 class="text-lg font-bold mb-4">Edit Trip Details</h3>
                     <div class="space-y-3">
                         <div><label class="text-sm font-medium">Destination</label><input type="text" id="edit-destination" class="w-full mt-1 p-2 border rounded-lg" value="${booking.destination}"></div>
@@ -1094,7 +1266,7 @@
         },
         showBookingFiltersModal() {
             const modalContent = `
-                <div class="modal-content fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
+                <div class="modal-content bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
                     <h3 class="text-lg font-bold mb-4">Filter & Sort</h3>
                     
                     <div class="mb-4">
@@ -1150,7 +1322,7 @@
         },
          showSearchFiltersModal() {
             const modalContent = `
-                <div class="modal-content fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
+                <div class="modal-content bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
                     <h3 class="text-lg font-bold mb-4">Filter & Sort</h3>
                      <div id="filter-options"></div>
                     <button data-action="applySearchFilters" class="w-full mt-4 text-white font-bold py-3 px-4 rounded-lg bg-indigo-600">Apply Filters</button>
@@ -1305,20 +1477,30 @@
         render_dashboard() {
             const { user } = mockData;
             const progress = (user.stats.revenue / user.stats.monthlyGoal) * 100;
-            const today = new Date('2025-10-09');
-            const paymentsToday = mockData.bookings.filter(b => b.invoice?.paymentDate === today.toISOString().split('T')[0]).reduce((sum, b) => sum + b.invoice.paid, 0);
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+
+            const paymentsToday = mockData.bookings
+                .filter(b => b.invoice?.paymentDate === todayStr)
+                .reduce((sum, b) => sum + b.invoice.paid, 0);
+            
             const paymentsDueThisWeek = mockData.bookings.filter(b => {
-                if (b.invoice?.status === 'Due') {
-                    const dueDate = new Date(b.travelDate);
-                    const diffDays = (dueDate - today) / (1000 * 60 * 60 * 24);
+                if (b.invoice?.status === 'Due' || b.invoice?.status === 'Overdue') {
+                    const travelDate = new Date(b.travelDate);
+                    // Assuming payment is due before travel date
+                    const diffDays = (travelDate - today) / (1000 * 60 * 60 * 24);
                     return diffDays >= 0 && diffDays <= 7;
                 }
                 return false;
             }).reduce((sum, b) => sum + (b.invoice.amount - b.invoice.paid), 0);
             
             return `
-                    <div class="space-y-6">
-                        <div class="bg-white p-4 rounded-xl shadow-sm border">
+                <!-- Responsive Grid Layout -->
+                <div class="lg:grid lg:grid-cols-3 lg:gap-6 space-y-6 lg:space-y-0">
+                    
+                    <!-- Left Column (Span 2) -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-white p-4 lg:p-6 rounded-xl shadow-sm border">
                             <h2 class="text-lg font-semibold">Your Performance</h2>
                             <div class="mt-2">
                                 <p class="font-bold text-3xl text-green-600">₹${user.stats.revenue.toLocaleString('en-IN')}</p>
@@ -1329,38 +1511,18 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                             ${mockData.kpis.map(kpi => `
-                                <div class="bg-white p-3 rounded-xl shadow-sm border">
+                                <div class="bg-white p-3 lg:p-4 rounded-xl shadow-sm border">
                                     <p class="text-xs text-gray-500">${kpi.label}</p>
-                                    <p class="text-xl font-bold mt-1">${kpi.value}</p>
+                                    <p class="text-xl lg:text-2xl font-bold mt-1">${kpi.value}</p>
                                     <p class="text-xs font-bold ${kpi.change.startsWith('+') ? 'text-green-500' : 'text-red-500'}">${kpi.change}</p>
                                 </div>
                             `).join('')}
                         </div>
 
-                        <div class="bg-white p-4 rounded-xl shadow-sm border">
-                            <h2 class="text-lg font-semibold mb-3">Upcoming Departures</h2>
-                            <div class="space-y-3">
-                                ${mockData.upcomingDepartures.map(d => `
-                                    <div data-action="navigate" data-view="trip_dashboard" data-booking-id="${d.bookingId}" data-destination="${d.destination}" class="border rounded-lg p-3 cursor-pointer active:bg-gray-50">
-                                        <div class="flex justify-between items-center">
-                                            <div>
-                                                <p class="font-semibold text-sm">${d.client}</p>
-                                                <p class="text-xs text-gray-500">${d.destination}</p>
-                                            </div>
-                                            <div class="text-right">
-                                                 <p class="font-bold text-sm text-indigo-600">${new Date(d.departureDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short'})}</p>
-                                                <p class="text-xs text-gray-500">Departure</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-
                         ${user.role === 'Admin' ? `
-                        <div class="bg-white p-4 rounded-xl shadow-sm border">
+                        <div class="bg-white p-4 lg:p-6 rounded-xl shadow-sm border">
                             <h2 class="text-lg font-semibold mb-3">Live Cash Flow</h2>
                             <div class="grid grid-cols-2 gap-4 text-center">
                                 <div>
@@ -1373,31 +1535,6 @@
                                 </div>
                             </div>
                         </div>` : ''}
-
-                        ${user.role === 'Admin' || user.role === 'Manager' ? `
-                        <div class="bg-white p-4 rounded-xl shadow-sm border">
-                            <h2 class="text-lg font-semibold mb-3">Live Team Activity</h2>
-                            <div class="space-y-2">
-                              ${mockData.teamActivity.map(activity => `
-                                  <div class="text-sm text-gray-700 flex items-start">
-                                      <i class="ph-info text-blue-500 mr-2 mt-0.5"></i>
-                                      <span>${activity}</span>
-                                  </div>
-                              `).join('')}
-                            </div>
-                        </div>` : ''}
-                        
-                        <div class="bg-white p-4 rounded-xl shadow-sm border">
-                            <h2 class="text-lg font-semibold mb-3">Recent Communications</h2>
-                            <div class="space-y-3">
-                                ${mockData.clients.flatMap(c => c.communication.map(log => ({...log, client: c.name}))).slice(0,3).map(log => `
-                                    <div class="text-sm border-b pb-2">
-                                        <p class="text-gray-800">${log.log}</p>
-                                        <p class="text-xs text-gray-400 mt-1">with ${log.client} by ${log.by}</p>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
 
                         <div id="ai-opportunities">
                             <h2 class="text-lg font-semibold mb-3 text-purple-600">✨ AI-Powered Opportunities</h2>
@@ -1420,146 +1557,330 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Right Column (Span 1) -->
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="bg-white p-4 lg:p-6 rounded-xl shadow-sm border">
+                            <h2 class="text-lg font-semibold mb-3">Upcoming Departures</h2>
+                            <div class="space-y-3">
+                                ${mockData.upcomingDepartures.map(d => `
+                                    <div data-action="navigate" data-view="trip_dashboard" data-booking-id="${d.bookingId}" data-destination="${d.destination}" class="border rounded-lg p-3 cursor-pointer active:bg-gray-50 hover:bg-gray-50">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <p class="font-semibold text-sm">${d.client}</p>
+                                                <p class="text-xs text-gray-500">${d.destination}</p>
+                                            </div>
+                                            <div class="text-right">
+                                                 <p class="font-bold text-sm text-indigo-600">${new Date(d.departureDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short'})}</p>
+                                                <p class="text-xs text-gray-500">Departure</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        ${user.role === 'Admin' || user.role === 'Manager' ? `
+                        <div class="bg-white p-4 lg:p-6 rounded-xl shadow-sm border">
+                            <h2 class="text-lg font-semibold mb-3">Live Team Activity</h2>
+                            <div class="space-y-2">
+                            ${mockData.teamActivity.map(activity => `
+                                <div class="text-sm text-gray-700 flex items-start">
+                                    <i class="ph-info text-blue-500 mr-2 mt-0.5"></i>
+                                    <span>${activity}</span>
+                                </div>
+                            `).join('')}
+                            </div>
+                        </div>` : ''}
+                        
+                        <div class="bg-white p-4 lg:p-6 rounded-xl shadow-sm border">
+                            <h2 class="text-lg font-semibold mb-3">Recent Communications</h2>
+                            <div class="space-y-3">
+                                ${mockData.clients.flatMap(c => c.communication.map(log => ({...log, client: c.name}))).slice(0,3).map(log => `
+                                    <div class="text-sm border-b pb-2">
+                                        <p class="text-gray-800">${log.log}</p>
+                                        <p class="text-xs text-gray-400 mt-1">with ${log.client} by ${log.by}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             `; 
         },
 
         render_bookings() { 
-            const statuses = ["In-Progress", "Confirmed", "Quoted", "Inquiry", "Completed"];
-            
-            const pipelineSummary = ['Inquiry', 'Quoted', 'Confirmed'].map(status => {
+            const statuses = ["Inquiry", "Quoted", "Confirmed", "In-Progress", "Completed"];
+            const pipelineSummary = statuses.map(status => {
                 const value = mockData.bookings
                     .filter(b => b.status === status)
                     .reduce((sum, b) => sum + b.value, 0);
                 return { status, value };
             });
-
-            // Filtering Logic
             const today = new Date();
-            let filteredBookings = mockData.bookings.filter(b => b.status === this.bookingStatusTab);
 
-            if (this.bookingFilters.assignedTo === 'me') {
-                filteredBookings = filteredBookings.filter(b => b.assignedTo === mockData.user.name || mockData.teams.includes(b.assignedTo));
-            } else if (this.bookingFilters.assignedTo === 'unassigned') {
-                filteredBookings = filteredBookings.filter(b => !b.assignedTo);
-            }
+            // --- Mobile View HTML ---
+            const mobileViewHTML = () => {
+                // Filtering Logic for Mobile
+                let filteredBookings = mockData.bookings.filter(b => b.status === this.bookingStatusTab);
 
-            if (this.bookingFilters.actionRequired) {
-                filteredBookings = filteredBookings.filter(b => {
-                    const travelDate = new Date(b.travelDate);
-                    const diffDays = (travelDate - today) / (1000 * 60 * 60 * 24);
-                    return b.invoice?.status === 'Overdue' || (!b.assignedTo && b.status === 'Inquiry') || (diffDays >= 0 && diffDays <= 7);
-                });
-            }
+                if (this.bookingFilters.assignedTo === 'me') {
+                    filteredBookings = filteredBookings.filter(b => b.assignedTo === mockData.user.name || mockData.teams.includes(b.assignedTo));
+                } else if (this.bookingFilters.assignedTo === 'unassigned') {
+                    filteredBookings = filteredBookings.filter(b => !b.assignedTo);
+                }
 
-            if (this.bookingFilters.highValue) {
-                filteredBookings = filteredBookings.filter(b => b.value > 200000);
-            }
+                if (this.bookingFilters.actionRequired) {
+                    filteredBookings = filteredBookings.filter(b => {
+                        const travelDate = new Date(b.travelDate);
+                        const diffDays = (travelDate - today) / (1000 * 60 * 60 * 24);
+                        return b.invoice?.status === 'Overdue' || (!b.assignedTo && b.status === 'Inquiry') || (diffDays >= 0 && diffDays <= 7);
+                    });
+                }
 
-            // Sorting Logic
-            if (this.bookingSort === 'travelDate') {
-                filteredBookings.sort((a, b) => new Date(a.travelDate) - new Date(b.travelDate));
-            } else if (this.bookingSort === 'lastUpdated') {
-                filteredBookings.sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated));
-            } else if (this.bookingSort === 'value') {
-                filteredBookings.sort((a, b) => b.value - a.value);
-            }
+                if (this.bookingFilters.highValue) {
+                    filteredBookings = filteredBookings.filter(b => b.value > 200000);
+                }
 
+                // Sorting Logic for Mobile
+                if (this.bookingSort === 'travelDate') {
+                    filteredBookings.sort((a, b) => new Date(a.travelDate) - new Date(b.travelDate));
+                } else if (this.bookingSort === 'lastUpdated') {
+                    filteredBookings.sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated));
+                } else if (this.bookingSort === 'value') {
+                    filteredBookings.sort((a, b) => b.value - a.value);
+                }
 
-            return `
-                <div id="kanban-board-mobile" class="flex flex-col h-full">
-                    <div class="mb-4">
-                        <h2 class="text-lg font-semibold mb-2">Pipeline Health Summary</h2>
-                        <div class="grid grid-cols-3 gap-2 text-center">
-                            ${pipelineSummary.map(p => `
-                                <div class="bg-white p-2 rounded-lg shadow-sm border">
-                                    <p class="text-xs font-medium text-gray-500">${p.status}</p>
-                                    <p class="font-bold text-sm">₹${p.value > 99999 ? (p.value/100000).toFixed(1) + 'L' : (p.value/1000).toFixed(0) + 'k'}</p>
-                                </div>
+                return `
+                    <div id="kanban-board-mobile" class="flex flex-col h-full lg:hidden">
+                        <div class="mb-4">
+                            <h2 class="text-lg font-semibold mb-2">Pipeline Health Summary</h2>
+                            <div class="grid grid-cols-3 gap-2 text-center">
+                                ${pipelineSummary.slice(0,3).map(p => `
+                                    <div class="bg-white p-2 rounded-lg shadow-sm border">
+                                        <p class="text-xs font-medium text-gray-500">${p.status}</p>
+                                        <p class="font-bold text-sm">₹${p.value > 99999 ? (p.value/100000).toFixed(1) + 'L' : (p.value/1000).toFixed(0) + 'k'}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-2 overflow-x-auto pb-3 -mx-4 px-4">
+                            ${statuses.map(status => `
+                                <button data-action="changeBookingStatusTab" data-status="${status}" class="booking-tab whitespace-nowrap text-sm font-medium py-2 px-4 rounded-full ${this.bookingStatusTab === status ? 'active' : 'bg-white text-gray-600'}">
+                                    ${status} <span class="text-xs opacity-80">${mockData.bookings.filter(b=>b.status===status).length}</span>
+                                </button>
                             `).join('')}
+                             <button data-action="showBookingFilters" class="ml-auto flex-shrink-0 bg-white text-gray-500 p-2 rounded-full shadow-sm border">
+                                <i class="ph-funnel text-lg"></i>
+                            </button>
+                        </div>
+
+                        <div class="space-y-3 mt-4">
+                            ${filteredBookings.length > 0 ? filteredBookings.map(booking => {
+                                let indicatorHTML = '';
+                                const travelDate = new Date(booking.travelDate);
+                                const diffDays = (travelDate - today) / (1000 * 60 * 60 * 24);
+
+                                if (booking.invoice?.status === 'Overdue') {
+                                    indicatorHTML = `<span class="absolute top-3 right-3 block h-2.5 w-2.5 rounded-full ring-2 ring-white" style="background-color: var(--danger-red);" title="Payment Overdue"></span>`;
+                                } else if (diffDays >= 0 && diffDays <= 7) {
+                                    indicatorHTML = `<span class="absolute top-3 right-3 block h-2.5 w-2.5 rounded-full ring-2 ring-white" style="background-color: var(--warning-orange);" title="Upcoming Travel"></span>`;
+                                } else if (!booking.assignedTo && booking.status === 'Inquiry') {
+                                    indicatorHTML = `<span class="absolute top-3 right-3 block h-2.5 w-2.5 rounded-full ring-2 ring-white" style="background-color: var(--info-blue);" title="Unassigned"></span>`;
+                                }
+
+
+                                const getInitials = (name) => name ? name.split(' ').map(n => n[0]).join('') : '';
+                                const assignedUser = mockData.staff.find(s => s.name === booking.assignedTo) || (mockData.user.name === booking.assignedTo ? mockData.user : null);
+                                let assignedToHTML = '';
+                                if (booking.assignedTo) {
+                                    if (assignedUser) {
+                                         assignedToHTML = `<div class="w-6 h-6 rounded-full bg-amber-200 text-amber-800 text-xs font-bold flex items-center justify-center" title="${assignedUser.name}">${getInitials(assignedUser.name)}</div>`;
+                                    } else {
+                                         assignedToHTML = `<div class="text-xs font-semibold bg-gray-100 text-gray-700 px-2 py-1 rounded-md">${booking.assignedTo}</div>`;
+                                    }
+                                }
+
+                                let paymentProgressHTML = '';
+                                if(booking.invoice) {
+                                    const progress = (booking.invoice.paid / booking.invoice.amount) * 100;
+                                    paymentProgressHTML = `
+                                        <div class="mt-3">
+                                            <div class="flex justify-between text-xs text-gray-500 mb-1">
+                                                <span>Payment</span>
+                                                <span>₹${booking.invoice.paid.toLocaleString('en-IN')} / ₹${booking.invoice.amount.toLocaleString('en-IN')}</span>
+                                            </div>
+                                            <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                                <div class="bg-green-500 h-1.5 rounded-full" style="width: ${progress}%"></div>
+                                            </div>
+                                        </div>
+                                    `;
+                                }
+
+                                return `
+                                <div class="swipe-container rounded-lg bg-white shadow-sm border">
+                                    <div class="swipe-actions">
+                                        <div data-action="logPayment" data-booking-id="${booking.id}" class="swipe-action-button bg-green-500"><i class="ph-currency-inr text-2xl"></i><span class="text-xs mt-1">Pay</span></div>
+                                        <div data-action="navigate" data-view="client_details" data-client-id="${mockData.clients.find(c => c.name === booking.client)?.id || ''}" class="swipe-action-button bg-blue-500"><i class="ph-phone text-2xl"></i><span class="text-xs mt-1">Call</span></div>
+                                    </div>
+                                    <div data-action="navigate" data-view="booking_details" data-booking-id="${booking.id}" class="swipe-content bg-white p-4 rounded-lg cursor-pointer relative">
+                                        ${indicatorHTML}
+                                        <div class="flex justify-between items-start">
+                                            <div>
+                                                <p class="font-semibold pr-4" style="color: var(--neutral-text-dark);">${booking.client}</p>
+                                                <p class="text-sm" style="color: var(--neutral-text-light);">${booking.destination}</p>
+                                            </div>
+                                            <p class="text-lg font-bold text-right" style="color: var(--success-green);">₹${booking.value > 0 ? booking.value.toLocaleString('en-IN') : 'N/A'}</p>
+                                        </div>
+                                        <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
+                                            <div class="flex items-center text-xs text-gray-500 space-x-3">
+                                                <span class="flex items-center"><i class="ph-calendar-blank mr-1"></i> ${new Date(booking.travelDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short'})}</span>
+                                                <span class="flex items-center"><i class="ph-users mr-1"></i> ${booking.travelers}</span>
+                                            </div>
+                                            ${assignedToHTML}
+                                        </div>
+                                        ${paymentProgressHTML}
+                                    </div>
+                                </div>
+                                `}).join('') : `<div class="text-center text-sm text-gray-400 pt-10">No bookings match your filters.</div>`}
                         </div>
                     </div>
+                `;
+            };
 
-                    <div class="flex items-center space-x-2 overflow-x-auto pb-3 -mx-4 px-4">
-                        ${statuses.map(status => `
-                            <button data-action="changeBookingStatusTab" data-status="${status}" class="booking-tab whitespace-nowrap text-sm font-medium py-2 px-4 rounded-full ${this.bookingStatusTab === status ? 'active' : 'bg-white text-gray-600'}">
-                                ${status} <span class="text-xs opacity-80">${mockData.bookings.filter(b=>b.status===status).length}</span>
-                            </button>
-                        `).join('')}
-                         <button data-action="showBookingFilters" class="ml-auto flex-shrink-0 bg-white text-gray-500 p-2 rounded-full shadow-sm border">
-                            <i class="ph-funnel text-lg"></i>
-                        </button>
-                    </div>
+            // --- Desktop View HTML ---
+            const desktopViewHTML = () => {
+                const getCardHTML = (booking) => {
+                    let indicatorHTML = '';
+                    const travelDate = new Date(booking.travelDate);
+                    const diffDays = (travelDate - today) / (1000 * 60 * 60 * 24);
 
-                    <div class="space-y-3 mt-4">
-                        ${filteredBookings.length > 0 ? filteredBookings.map(booking => {
-                            let indicatorHTML = '';
-                            const travelDate = new Date(booking.travelDate);
-                            const diffDays = (travelDate - today) / (1000 * 60 * 60 * 24);
+                    if (booking.invoice?.status === 'Overdue') {
+                        indicatorHTML = `<span class="absolute top-2 right-2 block h-2.5 w-2.5 rounded-full ring-2 ring-white" style="background-color: var(--danger-red);" title="Payment Overdue"></span>`;
+                    } else if (diffDays >= 0 && diffDays <= 7) {
+                        indicatorHTML = `<span class="absolute top-2 right-2 block h-2.5 w-2.5 rounded-full ring-2 ring-white" style="background-color: var(--warning-orange);" title="Upcoming Travel"></span>`;
+                    } else if (!booking.assignedTo && booking.status === 'Inquiry') {
+                        indicatorHTML = `<span class="absolute top-2 right-2 block h-2.5 w-2.5 rounded-full ring-2 ring-white" style="background-color: var(--info-blue);" title="Unassigned"></span>`;
+                    }
 
-                            if (booking.invoice?.status === 'Overdue') {
-                                indicatorHTML = `<span class="absolute top-3 right-3 block h-2.5 w-2.5 rounded-full ring-2 ring-white" style="background-color: var(--danger-red);" title="Payment Overdue"></span>`;
-                            } else if (diffDays >= 0 && diffDays <= 7) {
-                                indicatorHTML = `<span class="absolute top-3 right-3 block h-2.5 w-2.5 rounded-full ring-2 ring-white" style="background-color: var(--warning-orange);" title="Upcoming Travel"></span>`;
-                            } else if (!booking.assignedTo && booking.status === 'Inquiry') {
-                                indicatorHTML = `<span class="absolute top-3 right-3 block h-2.5 w-2.5 rounded-full ring-2 ring-white" style="background-color: var(--info-blue);" title="Unassigned"></span>`;
-                            }
+                    const getInitials = (name) => name ? name.split(' ').map(n => n[0]).join('') : '';
+                    const assignedUser = mockData.staff.find(s => s.name === booking.assignedTo) || (mockData.user.name === booking.assignedTo ? mockData.user : null);
+                    let assignedToHTML = '';
+                    if (booking.assignedTo) {
+                        if (assignedUser) {
+                                assignedToHTML = `<div class="w-6 h-6 rounded-full bg-amber-200 text-amber-800 text-xs font-bold flex items-center justify-center" title="${assignedUser.name}">${getInitials(assignedUser.name)}</div>`;
+                        } else {
+                                assignedToHTML = `<div class="text-xs font-semibold bg-gray-100 text-gray-700 px-2 py-1 rounded-md">${booking.assignedTo}</div>`;
+                        }
+                    }
 
-
-                            const getInitials = (name) => name ? name.split(' ').map(n => n[0]).join('') : '';
-                            const assignedUser = mockData.staff.find(s => s.name === booking.assignedTo) || (mockData.user.name === booking.assignedTo ? mockData.user : null);
-                            let assignedToHTML = '';
-                            if (booking.assignedTo) {
-                                if (assignedUser) {
-                                     assignedToHTML = `<div class="w-6 h-6 rounded-full bg-amber-200 text-amber-800 text-xs font-bold flex items-center justify-center" title="${assignedUser.name}">${getInitials(assignedUser.name)}</div>`;
-                                } else {
-                                     assignedToHTML = `<div class="text-xs font-semibold bg-gray-100 text-gray-700 px-2 py-1 rounded-md">${booking.assignedTo}</div>`;
-                                }
-                            }
-
-                            let paymentProgressHTML = '';
-                            if(booking.invoice) {
-                                const progress = (booking.invoice.paid / booking.invoice.amount) * 100;
-                                paymentProgressHTML = `
-                                    <div class="mt-3">
-                                        <div class="flex justify-between text-xs text-gray-500 mb-1">
-                                            <span>Payment</span>
-                                            <span>₹${booking.invoice.paid.toLocaleString('en-IN')} / ₹${booking.invoice.amount.toLocaleString('en-IN')}</span>
-                                        </div>
-                                        <div class="w-full bg-gray-200 rounded-full h-1.5">
-                                            <div class="bg-green-500 h-1.5 rounded-full" style="width: ${progress}%"></div>
-                                        </div>
-                                    </div>
-                                `;
-                            }
-
-                            return `
-                            <div class="swipe-container rounded-lg bg-white shadow-sm border">
-                                <div class="swipe-actions">
-                                    <div data-action="logPayment" data-booking-id="${booking.id}" class="swipe-action-button bg-green-500"><i class="ph-currency-inr text-2xl"></i><span class="text-xs mt-1">Pay</span></div>
-                                    <div data-action="navigate" data-view="client_details" data-client-id="${mockData.clients.find(c => c.name === booking.client)?.id || ''}" class="swipe-action-button bg-blue-500"><i class="ph-phone text-2xl"></i><span class="text-xs mt-1">Call</span></div>
+                    let paymentProgressHTML = '';
+                    if(booking.invoice) {
+                        const progress = (booking.invoice.paid / booking.invoice.amount) * 100;
+                        paymentProgressHTML = `
+                            <div class="mt-2">
+                                <div class="flex justify-between text-xs text-gray-500 mb-1">
+                                    <span>Payment</span>
+                                    <span>${Math.round(progress)}%</span>
                                 </div>
-                                <div data-action="navigate" data-view="booking_details" data-booking-id="${booking.id}" class="swipe-content bg-white p-4 rounded-lg cursor-pointer relative">
-                                    ${indicatorHTML}
-                                    <div class="flex justify-between items-start">
-                                        <div>
-                                            <p class="font-semibold pr-4" style="color: var(--neutral-text-dark);">${booking.client}</p>
-                                            <p class="text-sm" style="color: var(--neutral-text-light);">${booking.destination}</p>
-                                        </div>
-                                        <p class="text-lg font-bold text-right" style="color: var(--success-green);">₹${booking.value > 0 ? booking.value.toLocaleString('en-IN') : 'N/A'}</p>
-                                    </div>
-                                    <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
-                                        <div class="flex items-center text-xs text-gray-500 space-x-3">
-                                            <span class="flex items-center"><i class="ph-calendar-blank mr-1"></i> ${new Date(booking.travelDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short'})}</span>
-                                            <span class="flex items-center"><i class="ph-users mr-1"></i> ${booking.travelers}</span>
-                                        </div>
-                                        ${assignedToHTML}
-                                    </div>
-                                    ${paymentProgressHTML}
+                                <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                    <div class="bg-green-500 h-1.5 rounded-full" style="width: ${progress}%"></div>
                                 </div>
                             </div>
-                        `}).join('') : `<div class="text-center text-sm text-gray-400 pt-10">No bookings match your filters.</div>`}
+                        `;
+                    }
+
+                    return `
+                    <div data-action="navigate" data-view="booking_details" data-booking-id="${booking.id}" class="bg-white p-3 rounded-lg shadow-sm border cursor-pointer hover:shadow-md relative">
+                        ${indicatorHTML}
+                        <div>
+                            <p class="font-semibold text-sm pr-4">${booking.client}</p>
+                            <p class="text-xs text-gray-600">${booking.destination}</p>
+                            <p class="text-sm font-bold text-green-600 mt-1">₹${booking.value > 0 ? booking.value.toLocaleString('en-IN') : 'N/A'}</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-2 pt-2 border-t">
+                            <div class="flex items-center text-xs text-gray-500 space-x-2">
+                                <span class="flex items-center"><i class="ph-calendar-blank mr-1"></i> ${new Date(booking.travelDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short'})}</span>
+                                <span class="flex items-center"><i class="ph-users mr-1"></i> ${booking.travelers}</span>
+                            </div>
+                            ${assignedToHTML}
+                        </div>
+                        ${paymentProgressHTML}
+                    </div>`;
+                };
+
+                let allBookings = [...mockData.bookings];
+                // Apply global filters to all bookings
+                if (this.bookingFilters.assignedTo === 'me') {
+                    allBookings = allBookings.filter(b => b.assignedTo === mockData.user.name || mockData.teams.includes(b.assignedTo));
+                } else if (this.bookingFilters.assignedTo === 'unassigned') {
+                    allBookings = allBookings.filter(b => !b.assignedTo);
+                }
+
+                if (this.bookingFilters.actionRequired) {
+                    allBookings = allBookings.filter(b => {
+                        const travelDate = new Date(b.travelDate);
+                        const diffDays = (travelDate - today) / (1000 * 60 * 60 * 24);
+                        return b.invoice?.status === 'Overdue' || (!b.assignedTo && b.status === 'Inquiry') || (diffDays >= 0 && diffDays <= 7);
+                    });
+                }
+
+                if (this.bookingFilters.highValue) {
+                    allBookings = allBookings.filter(b => b.value > 200000);
+                }
+
+                // Apply global sort
+                if (this.bookingSort === 'travelDate') {
+                    allBookings.sort((a, b) => new Date(a.travelDate) - new Date(b.travelDate));
+                } else if (this.bookingSort === 'lastUpdated') {
+                    allBookings.sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated));
+                } else if (this.bookingSort === 'value') {
+                    allBookings.sort((a, b) => b.value - a.value);
+                }
+
+                return `
+                    <div id="kanban-board-desktop" class="hidden lg:flex h-full flex-col">
+                        <!-- Pipeline Summary -->
+                        <div class="mb-4">
+                            <h2 class="text-lg font-semibold mb-2">Pipeline Health Summary</h2>
+                            <div class="grid grid-cols-5 gap-4 text-center">
+                                ${pipelineSummary.map(p => `
+                                    <div class="bg-white p-3 rounded-lg shadow-sm border">
+                                        <p class="text-sm font-medium text-gray-500">${p.status}</p>
+                                        <p class="font-bold text-xl">₹${p.value > 99999 ? (p.value/100000).toFixed(1) + 'L' : (p.value/1000).toFixed(0) + 'k'}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <!-- Filter Bar -->
+                        <div class="flex items-center mb-4">
+                            <h2 class="text-xl font-semibold">Bookings Pipeline</h2>
+                            <button data-action="showBookingFilters" class="ml-auto flex items-center flex-shrink-0 bg-white text-gray-600 py-2 px-3 rounded-lg shadow-sm border hover:bg-gray-50">
+                                <i class="ph-funnel text-lg mr-1"></i> Filter & Sort
+                            </button>
+                        </div>
+
+                        <!-- Kanban Columns -->
+                        <div class="flex-1 grid grid-cols-5 gap-4 min-h-0">
+                            ${statuses.map(status => {
+                                const columnBookings = allBookings.filter(b => b.status === status);
+                                return `
+                                <div class="flex flex-col bg-slate-100 rounded-lg p-3">
+                                    <h3 class="font-semibold text-gray-700 mb-3 px-1">${status} <span class="text-sm text-gray-500 font-normal">(${columnBookings.length})</span></h3>
+                                    <div class="space-y-3 overflow-y-auto flex-1">
+                                        ${columnBookings.length > 0 ? columnBookings.map(getCardHTML).join('') : '<p class="text-xs text-gray-400 p-2 text-center">No bookings.</p>'}
+                                    </div>
+                                </div>
+                                `
+                            }).join('')}
+                        </div>
                     </div>
-                </div>`;
+                `;
+            };
+
+            return mobileViewHTML() + desktopViewHTML();
         },
         
         render_more() {
@@ -1572,19 +1893,22 @@
                 { view: 'profile', icon: 'ph-user-circle', title: 'My Profile' },
                 { view: 'walkthrough', icon: 'ph-info', title: 'How to Use' },
             ];
+             // This view is mobile-only, so we wrap it to hide on desktop
              return `
-                <div class="bg-white rounded-xl shadow-sm border divide-y">
-                    ${moreLinks.map(link => `
-                        <div data-action="navigate" data-view="${link.view}" class="flex items-center p-4 cursor-pointer active:bg-gray-100">
-                            <i class="ph ${link.icon} text-xl text-gray-500"></i>
-                            <span class="ml-4 font-medium">${link.title}</span>
-                            <i class="ph-caret-right text-gray-400 ml-auto"></i>
-                        </div>
-                    `).join('')}
-                </div>
-                <div data-action="logout" class="bg-white rounded-xl shadow-sm border mt-6 flex items-center p-4 cursor-pointer active:bg-red-50 text-red-600">
-                    <i class="ph-sign-out text-xl"></i>
-                    <span class="ml-4 font-medium">Logout</span>
+                <div class="space-y-6 lg:hidden">
+                    <div class="bg-white rounded-xl shadow-sm border divide-y">
+                        ${moreLinks.map(link => `
+                            <div data-action="navigate" data-view="${link.view}" class="flex items-center p-4 cursor-pointer active:bg-gray-100">
+                                <i class="ph ${link.icon} text-xl text-gray-500"></i>
+                                <span class="ml-4 font-medium">${link.title}</span>
+                                <i class="ph-caret-right text-gray-400 ml-auto"></i>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div data-action="logout" class="bg-white rounded-xl shadow-sm border mt-6 flex items-center p-4 cursor-pointer active:bg-red-50 text-red-600">
+                        <i class="ph-sign-out text-xl"></i>
+                        <span class="ml-4 font-medium">Logout</span>
+                    </div>
                 </div>
             `;
         },
@@ -1615,7 +1939,7 @@
                         <h2 class="text-lg font-semibold mb-3">Supplier Directory</h2>
                         <div class="space-y-3">
                             ${mockData.suppliers.map(s => `
-                                <div data-action="navigate" data-view="supplier_details" data-supplier-id="${s.id}" class="border rounded-lg p-3 flex items-center cursor-pointer active:bg-gray-50">
+                                <div data-action="navigate" data-view="supplier_details" data-supplier-id="${s.id}" class="border rounded-lg p-3 flex items-center cursor-pointer active:bg-gray-50 hover:bg-gray-50">
                                     <div class="flex-1">
                                         <p class="font-semibold text-sm">${s.name} ${s.verified ? '<i class="ph-seal-check-fill text-blue-500"></i>' : ''}</p>
                                         <p class="text-xs" style="color: var(--neutral-text-light);">${s.service}</p>
@@ -1679,7 +2003,7 @@
                 { q: "How do I earn points in the Trust Hub?", a: "You earn points for contributing to the community! This includes leaving detailed reviews for suppliers (+50 points), adding a new trusted supplier (+100 points), and verifying supplier information (+20 points)." },
                 { q: "What's the difference between Search and Marketplace?", a: "Use <b>Search</b> when you know what you're looking for (e.g., 'Manali package'). Use <b>Marketplace</b> to discover exclusive, time-sensitive deals and flash sales from suppliers when you're looking for inspiration or great value." },
                 { q: "How do I handle a crisis alert?", a: "When the red bell icon appears in the header, tap it immediately. You'll be taken to the Crisis Management screen with AI-suggested alternatives and a communication hub to update all stakeholders at once." },
-                { q: "Can I use this on my desktop computer?", a: "Absolutely! While designed for mobile, the platform is fully responsive and works beautifully on desktops. The layout will adapt to a larger screen, giving you more room to work." }
+                { q: "How does the new desktop view work?", a: "The desktop view provides a more expansive dashboard. The mobile bottom bar is replaced by a permanent sidebar for navigation. Pages like Bookings and Analytics use multi-column layouts to show you more information at a glance." }
             ];
 
             return `
@@ -1691,12 +2015,12 @@
                      <div class="bg-white p-4 rounded-xl shadow-sm border">
                         <h2 class="text-xl font-bold mb-3 text-teal-600">2. Master Your Workflow with Quick Actions</h2>
                         <p class="text-sm text-gray-600 mb-4">We've streamlined your most common tasks to save you valuable time:</p>
-                        <p class="text-sm text-gray-600 mb-2"><b>Swipeable Bookings:</b> In the "Bookings" tab, swipe left on any booking card to instantly reveal actions like "Log Payment" or "Call Client."</p>
-                        <p class="text-sm text-gray-600"><b>Global FAB:</b> The purple "+" button at the bottom right is your shortcut to creation. Tap it anytime to start a "New Itinerary" or "New Booking" from anywhere in the app.</p>
+                        <p class="text-sm text-gray-600 mb-2"><b>Mobile:</b> In "Bookings", swipe left on any booking to instantly "Log Payment" or "Call Client." The purple "+" button is your global shortcut to create new items.</p>
+                        <p class="text-sm text-gray-600"><b>Desktop:</b> The "New Booking" and "New Itinerary" buttons are always available at the top of the sidebar. The bookings page becomes a full drag-and-drop (future) Kanban board.</p>
                     </div>
                      <div class="bg-white p-4 rounded-xl shadow-sm border">
                         <h2 class="text-xl font-bold mb-3 text-amber-600">3. Become a Leader in the Trust Hub</h2>
-                        <p class="text-sm text-gray-600">Your expertise is now recognized and rewarded. Go to <b>More > Trust Hub</b> to see your community rank and points. Earn points and badges by leaving quality reviews for suppliers. This not only helps your peers but also establishes you as a trusted expert in the travel community.</p>
+                        <p class="text-sm text-gray-600">Your expertise is now recognized and rewarded. Go to <b>More > Trust Hub</b> (or use the sidebar) to see your community rank. Earn points and badges by leaving quality reviews for suppliers. This helps your peers and establishes you as a trusted expert.</p>
                     </div>
 
                     <div class="bg-white p-4 rounded-xl shadow-sm border">
@@ -1749,7 +2073,10 @@
                 }
             }
 
-            return `<div class="space-y-4">
+            return `
+                <div class="lg:grid lg:grid-cols-3 lg:gap-6 space-y-4 lg:space-y-0">
+                    <!-- Left Column: Search Forms -->
+                    <div class="lg:col-span-1 space-y-4">
                         <div class="bg-gray-100 rounded-lg p-1 flex items-center text-sm">
                             ${['Packages','Hotels','Flights', 'Suppliers'].map(t => `<button data-action="changeSearchTab" data-tab="${t}" class="search-tab flex-1 text-center font-medium py-1.5 px-2 rounded-md ${this.searchTab===t ? 'active':''}">${t}</button>`).join('')}
                              <button data-action="showSearchFilters" class="ml-2 flex-shrink-0 bg-white text-gray-500 p-2 rounded-full shadow-sm border">
@@ -1760,10 +2087,10 @@
                          <div class="bg-white p-4 rounded-xl shadow-sm border">
                             <h3 class="text-md font-semibold text-purple-600 mb-2">✨ Smart Search</h3>
                              <div class="relative">
-                               <input type="text" id="smart-search-input" placeholder="e.g. weekend adventure trip under 1L" class="w-full pr-12 pl-4 py-2.5 border rounded-lg">
-                               <button id="smart-search-btn" data-action="performSmartSearch" class="absolute right-2 top-1/2 -translate-y-1/2 text-indigo-600 p-1 rounded-full hover:bg-indigo-100">
+                                <input type="text" id="smart-search-input" placeholder="e.g. weekend adventure trip under 1L" class="w-full pr-12 pl-4 py-2.5 border rounded-lg">
+                                <button id="smart-search-btn" data-action="performSmartSearch" class="absolute right-2 top-1/2 -translate-y-1/2 text-indigo-600 p-1 rounded-full hover:bg-indigo-100">
                                    <i class="ph-paper-plane-tilt text-2xl"></i>
-                               </button>
+                                </button>
                             </div>
                          </div>
 
@@ -1780,7 +2107,10 @@
                             <div class="${this.searchTab === 'Suppliers' ? '' : 'hide'}"><input type="text" id="supplier-search-input" value="${query||''}" placeholder="e.g., Jaipur Royal Cabs" class="w-full px-4 py-2.5 border rounded-lg"></div>
                             <button data-action="performSearch" class="w-full mt-3 text-white font-bold py-3 rounded-lg bg-indigo-600">Search</button>
                         </div>
+                    </div>
 
+                    <!-- Right Column: Results -->
+                    <div class="lg:col-span-2 space-y-4">
                         <div id="recent-searches" class="pt-2">
                             <h3 class="text-sm font-semibold text-gray-500 mb-2">Recent Searches</h3>
                             <div class="flex flex-wrap gap-2">
@@ -1789,58 +2119,65 @@
                         </div>
 
                         <div id="search-results-container" class="pt-4">${resultsHTML}</div>
-                    </div>`;
+                    </div>
+                </div>`;
         },
         render_itinerary_builder() {
              if (!this.currentItinerary) return `<div class="bg-white p-6 rounded-xl text-center"><p class="text-gray-500">No itinerary selected. Please search for a package first.</p></div>`;
             return `
-                <div class="space-y-6">
-                    <div class="bg-white p-4 rounded-xl shadow-sm border">
-                        <h2 class="text-xl font-semibold">${this.currentItinerary.title}</h2>
-                        <p class="text-sm text-gray-500">for ${this.currentItinerary.clientName}</p>
-                    </div>
+                <div class="lg:grid lg:grid-cols-3 lg:gap-6 space-y-6 lg:space-y-0">
+                    <!-- Left Column: Itinerary Details -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border">
+                            <h2 class="text-xl font-semibold">${this.currentItinerary.title}</h2>
+                            <p class="text-sm text-gray-500">for ${this.currentItinerary.clientName}</p>
+                        </div>
 
-                    <div class="bg-white p-4 rounded-xl shadow-sm border">
-                        <h3 class="text-lg font-bold mb-3">Day-wise Plan</h3>
-                        <div class="space-y-2">
-                            ${this.currentItinerary.dayWisePlan.map((day, index) => {
-                                const hotel = mockData.hotels.find(h => h.id === day.hotelId);
-                                return `
-                                <div class="border rounded-lg">
-                                    <div data-action="toggleAccordion" class="flex justify-between items-center p-3 cursor-pointer bg-gray-50 rounded-t-lg">
-                                        <h4 class="font-semibold text-sm">Day ${day.day}: ${day.title}</h4>
-                                        <i class="ph-caret-down text-lg text-gray-500"></i>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border">
+                            <h3 class="text-lg font-bold mb-3">Day-wise Plan</h3>
+                            <div class="space-y-2">
+                                ${this.currentItinerary.dayWisePlan.map((day, index) => {
+                                    const hotel = mockData.hotels.find(h => h.id === day.hotelId);
+                                    return `
+                                    <div class="border rounded-lg">
+                                        <div data-action="toggleAccordion" class="flex justify-between items-center p-3 cursor-pointer bg-gray-50 rounded-t-lg">
+                                            <h4 class="font-semibold text-sm">Day ${day.day}: ${day.title}</h4>
+                                            <i class="ph-caret-down text-lg text-gray-500"></i>
+                                        </div>
+                                        <div class="accordion-content p-3">
+                                            <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
+                                                ${day.activities.map(act => `<li>${act}</li>`).join('')}
+                                            </ul>
+                                            ${hotel ? `<div class="mt-3 pt-3 border-t"><p class="text-xs font-semibold text-gray-400 mb-1">STAY</p><p class="text-sm font-semibold">${hotel.name}</p></div>` : ''}
+                                        </div>
                                     </div>
-                                    <div class="accordion-content p-3">
-                                        <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
-                                            ${day.activities.map(act => `<li>${act}</li>`).join('')}
-                                        </ul>
-                                        ${hotel ? `<div class="mt-3 pt-3 border-t"><p class="text-xs font-semibold text-gray-400 mb-1">STAY</p><p class="text-sm font-semibold">${hotel.name}</p></div>` : ''}
-                                    </div>
-                                </div>
-                                `
-                            }).join('')}
+                                    `
+                                }).join('')}
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="bg-white p-4 rounded-xl shadow-sm border">
-                        <h3 class="text-lg font-bold mb-3">Cost & Profit</h3>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex justify-between"><span class="text-gray-600">Base Price:</span> <span>₹${this.currentItinerary.price.toLocaleString('en-IN')}</span></div>
-                            <div class="flex justify-between"><span class="text-gray-600">Addons:</span> <span>+ ₹${this.currentItinerary.addons.reduce((sum, a) => sum + a.price, 0).toLocaleString('en-IN')}</span></div>
-                            <div class="flex justify-between font-bold border-t pt-2 mt-2"><span >Total Price:</span> <span>₹${this.currentItinerary.totalPrice.toLocaleString('en-IN')}</span></div>
-                            <div class="flex justify-between font-bold text-green-600"><span>Your Profit (${this.currentItinerary.margin}%):</span> <span>₹${this.currentItinerary.profit.toLocaleString('en-IN')}</span></div>
+                    <!-- Right Column: Costing & Actions -->
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border">
+                            <h3 class="text-lg font-bold mb-3">Cost & Profit</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between"><span class="text-gray-600">Base Price:</span> <span>₹${this.currentItinerary.price.toLocaleString('en-IN')}</span></div>
+                                <div class="flex justify-between"><span class="text-gray-600">Addons:</span> <span>+ ₹${this.currentItinerary.addons.reduce((sum, a) => sum + a.price, 0).toLocaleString('en-IN')}</span></div>
+                                <div class="flex justify-between font-bold border-t pt-2 mt-2"><span >Total Price:</span> <span>₹${this.currentItinerary.totalPrice.toLocaleString('en-IN')}</span></div>
+                                <div class="flex justify-between font-bold text-green-600"><span>Your Profit (${this.currentItinerary.margin}%):</span> <span>₹${this.currentItinerary.profit.toLocaleString('en-IN')}</span></div>
+                            </div>
                         </div>
+                        <button id="optimize-itinerary-btn" data-action="optimizeItinerary" class="w-full flex items-center justify-center text-white font-bold py-3 px-4 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600">✨ Optimize with AI</button>
+                        <button data-action="generateQuote" class="w-full text-white font-bold py-3 px-4 rounded-lg bg-green-500">Generate & Send Quote</button>
                     </div>
-                    <button id="optimize-itinerary-btn" data-action="optimizeItinerary" class="w-full flex items-center justify-center text-white font-bold py-3 px-4 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600">✨ Optimize with AI</button>
-                    <button data-action="generateQuote" class="w-full text-white font-bold py-3 px-4 rounded-lg bg-green-500">Generate & Send Quote</button>
                 </div>
             `;
         },
         render_profile() {
             const { name, agency, points, rank, badges } = mockData.user;
             return `
-                <div class="space-y-6">
+                <div class="space-y-6 max-w-2xl mx-auto">
                     <div class="bg-white p-4 rounded-xl shadow-sm border text-center">
                         <img src="https://placehold.co/80x80/F59E0B/FFFFFF?text=RK" class="w-20 h-20 rounded-full mx-auto" alt="User Avatar">
                         <h2 class="text-2xl font-bold mt-4">${name}</h2>
@@ -1881,7 +2218,7 @@
                         <h2 class="text-xl font-bold mb-4">All Invoices</h2>
                         <div class="space-y-3">
                             ${invoices.map(inv => `
-                                <div data-action="navigate" data-view="booking_details" data-booking-id="${inv.bookingId}" class="border rounded-lg p-3 cursor-pointer active:bg-gray-50">
+                                <div data-action="navigate" data-view="booking_details" data-booking-id="${inv.bookingId}" class="border rounded-lg p-3 cursor-pointer active:bg-gray-50 hover:bg-gray-50">
                                     <div class="flex justify-between items-center">
                                         <p class="font-semibold text-sm">${inv.client}</p>
                                         <span class="text-xs font-semibold px-2 py-1 rounded-full ${statusClasses[inv.status]}">${inv.status}</span>
@@ -1901,7 +2238,7 @@
             if (!booking) return `<h1>Booking not found.</h1>`;
             const statusClasses = { Paid: 'bg-green-100 text-green-800', Due: 'bg-amber-100 text-amber-800', Overdue: 'bg-red-100 text-red-800' };
             return `
-                <div class="space-y-6">
+                <div class="space-y-6 max-w-3xl mx-auto">
                     <div class="bg-white p-4 rounded-xl shadow-sm border">
                         <div class="flex justify-between items-start">
                             <div>
@@ -1955,7 +2292,7 @@
         render_analytics() { 
             const analysis = mockData.analyticsData.pricingAnalysis['PKG_MANALI_01'];
             return `
-                <div class="space-y-6">
+                <div class="lg:grid lg:grid-cols-2 lg:gap-6 space-y-6 lg:space-y-0">
                     <div class="bg-white p-4 rounded-xl shadow-sm border">
                         <h3 class="text-lg font-bold mb-3">Monthly Revenue (Lakhs)</h3>
                         <canvas id="revenue-chart"></canvas>
@@ -1964,7 +2301,7 @@
                         <h3 class="text-lg font-bold mb-3">Bookings by Destination</h3>
                         <canvas id="bookings-chart"></canvas>
                     </div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm border">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border lg:col-span-2">
                         <h3 class="text-lg font-bold mb-3">Pricing Optimizer</h3>
                         <p class="text-sm font-semibold">Himalayan Escape Package</p>
                         <div class="mt-4">
@@ -1984,7 +2321,7 @@
             `; 
         },
         render_clients() {
-            const today = new Date('2025-10-09');
+            const today = new Date();
             const activeClients = mockData.bookings.filter(b => b.status === 'In-Progress');
             const upcomingClients = mockData.bookings.filter(b => b.status === 'Confirmed' && new Date(b.travelDate) > today);
             const pastClients = mockData.bookings.filter(b => b.status === 'Completed');
@@ -1996,7 +2333,7 @@
 
             return `
                     <div class="flex flex-col h-full">
-                        <div class="bg-gray-100 rounded-lg p-1 flex items-center text-sm mb-4">
+                        <div class="bg-gray-100 rounded-lg p-1 flex items-center text-sm mb-4 max-w-md">
                             <button data-action="changeClientsTab" data-tab="Active" class="clients-tab flex-1 text-center font-medium py-1.5 px-2 rounded-md ${this.clientsTab==='Active' ? 'active':''}">${activeClients.length} Active</button>
                             <button data-action="changeClientsTab" data-tab="Upcoming" class="clients-tab flex-1 text-center font-medium py-1.5 px-2 rounded-md ${this.clientsTab==='Upcoming' ? 'active':''}">${upcomingClients.length} Upcoming</button>
                             <button data-action="changeClientsTab" data-tab="Past" class="clients-tab flex-1 text-center font-medium py-1.5 px-2 rounded-md ${this.clientsTab==='Past' ? 'active':''}">${pastClients.length} Past</button>
@@ -2005,7 +2342,7 @@
                             ${clientList.length > 0 ? clientList.map(b => {
                                 const client = mockData.clients.find(c => c.name === b.client);
                                 return `
-                                    <div class="bg-white rounded-lg shadow-sm border p-3">
+                                    <div class="bg-white rounded-lg shadow-sm border p-3 max-w-2xl">
                                         <div class="flex justify-between items-start">
                                             <div>
                                                 <p class="font-semibold">${b.client}</p>
@@ -2029,7 +2366,7 @@
             const client = mockData.clients.find(c => c.id === clientId);
              if (!client) return `<h1>Client not found.</h1>`;
             return `
-                <div class="space-y-6">
+                <div class="space-y-6 max-w-2xl mx-auto">
                     <div class="bg-white p-4 rounded-xl shadow-sm border">
                         <h2 class="text-2xl font-bold">${client.name}</h2>
                         <div class="grid grid-cols-2 gap-4 mt-4 text-center">
@@ -2062,33 +2399,38 @@
                 <div class="space-y-6">
                     <div>
                         <h2 class="text-xl font-bold mb-3">Flash Sales</h2>
-                        ${mockData.deals.filter(d => d.type === 'Flash Sale').map(deal => `
-                             <div class="bg-white rounded-lg shadow-sm border overflow-hidden mb-4">
-                                <img src="${deal.img}" class="w-full h-40 object-cover">
-                                <div class="p-3">
-                                    <h3 class="font-semibold">${deal.title}</h3>
-                                    <p class="text-xs text-gray-500 mt-1">${deal.description}</p>
-                                    <div class="mt-2 text-center text-red-600 font-bold bg-red-100 rounded py-1 text-sm countdown-timer" data-expiration="${deal.expiration}"></div>
-                                    <button data-action="buildItinerary" data-package-id="${deal.packageId}" class="w-full mt-2 text-white font-bold py-2 rounded-lg bg-amber-500">View Deal</button>
+                        <!-- Responsive grid for deals -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            ${mockData.deals.filter(d => d.type === 'Flash Sale').map(deal => `
+                                <div class="bg-white rounded-lg shadow-sm border overflow-hidden">
+                                    <img src="${deal.img}" class="w-full h-40 object-cover">
+                                    <div class="p-3">
+                                        <h3 class="font-semibold">${deal.title}</h3>
+                                        <p class="text-xs text-gray-500 mt-1">${deal.description}</p>
+                                        <div class="mt-2 text-center text-red-600 font-bold bg-red-100 rounded py-1 text-sm countdown-timer" data-expiration="${deal.expiration}"></div>
+                                        <button data-action="buildItinerary" data-package-id="${deal.packageId}" class="w-full mt-2 text-white font-bold py-2 rounded-lg bg-amber-500">View Deal</button>
+                                    </div>
                                 </div>
-                            </div>
-                        `).join('')}
+                            `).join('')}
+                        </div>
                     </div>
                     <div>
                         <h2 class="text-xl font-bold mb-3">Exclusive Deals</h2>
-                        ${mockData.deals.filter(d => d.type === 'Exclusive').map(deal => `
-                            <div class="bg-white rounded-lg shadow-sm border mb-4 flex">
-                                <img src="${deal.img}" class="w-24 h-full object-cover rounded-l-lg">
-                                <div class="p-3 flex-1">
-                                    <h3 class="font-semibold text-sm">${deal.title}</h3>
-                                    <p class="text-xs text-gray-500 mt-1">${deal.description}</p>
-                                    <div class="mt-2 flex justify-between items-center">
-                                        <span class="font-bold text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full text-xs">${deal.discount}</span>
-                                        <button data-action="buildItinerary" data-package-id="${deal.packageId}" class="text-xs font-bold text-amber-600">Book Now</button>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${mockData.deals.filter(d => d.type === 'Exclusive').map(deal => `
+                                <div class="bg-white rounded-lg shadow-sm border flex">
+                                    <img src="${deal.img}" class="w-24 h-full object-cover rounded-l-lg">
+                                    <div class="p-3 flex-1">
+                                        <h3 class="font-semibold text-sm">${deal.title}</h3>
+                                        <p class="text-xs text-gray-500 mt-1">${deal.description}</p>
+                                        <div class="mt-2 flex justify-between items-center">
+                                            <span class="font-bold text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full text-xs">${deal.discount}</span>
+                                            <button data-action="buildItinerary" data-package-id="${deal.packageId}" class="text-xs font-bold text-amber-600">Book Now</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        `).join('')}
+                            `).join('')}
+                        </div>
                     </div>
                 </div>
             `;
@@ -2098,7 +2440,7 @@
             const trip = mockData.bookings.find(b => b.id === bookingId);
             const liveData = mockData.liveTripData[bookingId] || { weather: {}, alerts:[], news:[], checklist: [] };
             return `
-                <div class="space-y-6">
+                <div class="space-y-6 max-w-3xl mx-auto">
                     <div class="bg-white p-4 rounded-xl shadow-sm border">
                         <h2 class="text-xl font-bold">Live Dashboard: ${trip.destination}</h2>
                         <p class="text-sm text-gray-500">for ${trip.client}</p>
@@ -2134,7 +2476,7 @@
         render_crisis() {
             const { crisis } = mockData;
             return `
-                <div class="space-y-6">
+                <div class="space-y-6 max-w-3xl mx-auto">
                     <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg">
                         <h2 class="font-bold">${crisis.issue}</h2>
                         <p class="text-sm">${crisis.impact}</p>
@@ -2167,7 +2509,7 @@
         
         showLeaderboardModal() {
             const modalContent = `
-                <div class="modal-content fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
+                <div class="modal-content bg-white p-4 rounded-t-2xl shadow-2xl w-full z-[1002]">
                     <h3 class="text-lg font-bold mb-4">Top Contributors</h3>
                     <div class="space-y-3 max-h-[50vh] overflow-y-auto">
                         ${mockData.leaderboard.map(item => `
@@ -2188,12 +2530,16 @@
         
         renderCharts() {
             const { revenue, revenueLabels, bookingsByDest, bookingsByDestLabels } = mockData.analyticsData;
-            this.charts.revenue = new Chart(document.getElementById('revenue-chart'), {
-                type: 'line', data: { labels: revenueLabels, datasets: [{ label: 'Revenue', data: revenue, borderColor: 'var(--primary-indigo)', tension: 0.1, backgroundColor: 'rgba(79, 70, 229, 0.1)', fill: true }] }, options: { responsive: true }
-            });
-            this.charts.bookings = new Chart(document.getElementById('bookings-chart'), {
-                type: 'doughnut', data: { labels: bookingsByDestLabels, datasets: [{ label: 'Bookings', data: bookingsByDest, backgroundColor: ['#4F46E5', '#10B981', '#F59E0B', '#EF4444'] }] }, options: { responsive: true, cutout: '70%' }
-            });
+            if (document.getElementById('revenue-chart')) {
+                this.charts.revenue = new Chart(document.getElementById('revenue-chart'), {
+                    type: 'line', data: { labels: revenueLabels, datasets: [{ label: 'Revenue', data: revenue, borderColor: 'var(--primary-indigo)', tension: 0.1, backgroundColor: 'rgba(79, 70, 229, 0.1)', fill: true }] }, options: { responsive: true }
+                });
+            }
+            if (document.getElementById('bookings-chart')) {
+                this.charts.bookings = new Chart(document.getElementById('bookings-chart'), {
+                    type: 'doughnut', data: { labels: bookingsByDestLabels, datasets: [{ label: 'Bookings', data: bookingsByDest, backgroundColor: ['#4F46E5', '#10B981', '#F59E0B', '#EF4444'] }] }, options: { responsive: true, cutout: '70%' }
+                });
+            }
         },
 
         renderSupplierPeerReviewChart() {
@@ -2204,23 +2550,25 @@
                 return acc;
             }, [0,0,0,0,0]);
 
-            this.charts.supplierPeerReviews = new Chart(document.getElementById('supplier-peer-review-chart'), {
-                type: 'bar',
-                data: {
-                    labels: ['😡', '😟', '😐', '🙂', '😄'],
-                    datasets: [{
-                        label: 'Number of Reviews',
-                        data: ratingCounts,
-                        backgroundColor: ['#EF4444', '#F97316', '#F59E0B', '#84CC16', '#22C55E'],
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } }
-                }
-            });
+            if (document.getElementById('supplier-peer-review-chart')) {
+                this.charts.supplierPeerReviews = new Chart(document.getElementById('supplier-peer-review-chart'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['😡', '😟', '😐', '🙂', '😄'],
+                        datasets: [{
+                            label: 'Number of Reviews',
+                            data: ratingCounts,
+                            backgroundColor: ['#EF4444', '#F97316', '#F59E0B', '#84CC16', '#22C55E'],
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                    }
+                });
+            }
         },
 
         render_team_hub() {
@@ -2231,7 +2579,7 @@
                         <h3 class="text-lg font-bold mb-3">Team Leaderboard</h3>
                         <div class="space-y-2">
                             ${[...mockData.staff, mockData.user].sort((a,b) => (b.stats?.revenue || 0) - (a.stats?.revenue || 0)).map(s => `
-                                <div data-action="navigate" data-view="staff_details" data-staff-id="${s.id}" class="border rounded-lg p-3 flex items-center cursor-pointer active:bg-gray-50">
+                                <div data-action="navigate" data-view="staff_details" data-staff-id="${s.id}" class="border rounded-lg p-3 flex items-center cursor-pointer active:bg-gray-50 hover:bg-gray-50">
                                     <div class="flex-1">
                                         <p class="font-semibold text-sm">${s.name} <span class="text-xs text-gray-400 font-normal">${s.role}</span></p>
                                         <p class="text-xs text-gray-500">${s.team || ''}</p>
@@ -2268,7 +2616,7 @@
             }
 
             return `
-                <div class="space-y-6">
+                <div class="space-y-6 max-w-2xl">
                     <div class="bg-gray-100 rounded-lg p-1 flex items-center text-sm mb-4">
                         <button data-action="changeTeamHubTab" data-tab="Performance" class="team-tab flex-1 text-center font-medium py-1.5 px-2 rounded-md ${this.teamHubTab ==='Performance' ? 'active':''}">${'Performance'}</button>
                         <button data-action="changeTeamHubTab" data-tab="Manage" class="team-tab flex-1 text-center font-medium py-1.5 px-2 rounded-md ${this.teamHubTab ==='Manage' ? 'active':''}">${'Manage Staff'}</button>
@@ -2282,7 +2630,7 @@
             const { staffId } = this.navigationContext;
             const staff = mockData.staff.find(s => s.id === staffId) || mockData.user;
              return `
-                <div class="space-y-6">
+                <div class="space-y-6 max-w-2xl mx-auto">
                     <div class="bg-white p-4 rounded-xl shadow-sm border">
                         <h2 class="text-2xl font-bold">${staff.name}</h2>
                         <p class="text-sm text-gray-500">${staff.role} - ${staff.team || 'Management'}</p>
@@ -2302,36 +2650,42 @@
             if (!this.currentItinerary) return `<h1>Error creating custom itinerary.</h1>`;
             
             return `
-                <div class="space-y-6">
-                    <div class="bg-white p-4 rounded-xl shadow-sm border">
-                        <h2 class="text-xl font-semibold">${this.currentItinerary.title}</h2>
-                        <p class="text-sm text-gray-500">for ${this.currentItinerary.clientName}</p>
-                    </div>
-
-                    <div class="bg-white p-4 rounded-xl shadow-sm border">
-                        <h3 class="text-lg font-bold mb-3">Build Day-wise Plan</h3>
-                        <div id="custom-plan-container" class="space-y-2">
-                            ${this.currentItinerary.dayWisePlan.map((day, index) => `
-                                <div class="border rounded-lg p-3 bg-gray-50">
-                                    <p class="font-semibold text-sm">Day ${day.day}: ${day.title}</p>
-                                    <textarea class="w-full mt-2 p-2 border rounded-lg text-sm" rows="2" placeholder="Add activities for this day...">${day.activities.join('\n')}</textarea>
-                                </div>
-                            `).join('')}
+                <div class="lg:grid lg:grid-cols-3 lg:gap-6 space-y-6 lg:space-y-0">
+                    <!-- Left Column: Itinerary Details -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border">
+                            <h2 class="text-xl font-semibold">${this.currentItinerary.title}</h2>
+                            <p class="text-sm text-gray-500">for ${this.currentItinerary.clientName}</p>
                         </div>
-                        <button data-action="addDayToCustomItinerary" class="w-full mt-3 text-sm font-semibold text-indigo-600 bg-indigo-100 py-2 rounded-lg">Add Day</button>
+
+                        <div class="bg-white p-4 rounded-xl shadow-sm border">
+                            <h3 class="text-lg font-bold mb-3">Build Day-wise Plan</h3>
+                            <div id="custom-plan-container" class="space-y-2">
+                                ${this.currentItinerary.dayWisePlan.map((day, index) => `
+                                    <div class="border rounded-lg p-3 bg-gray-50">
+                                        <p class="font-semibold text-sm">Day ${day.day}: ${day.title}</p>
+                                        <textarea class="w-full mt-2 p-2 border rounded-lg text-sm" rows="2" placeholder="Add activities for this day...">${day.activities.join('\n')}</textarea>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <button data-action="addDayToCustomItinerary" class="w-full mt-3 text-sm font-semibold text-indigo-600 bg-indigo-100 py-2 rounded-lg">Add Day</button>
+                        </div>
                     </div>
                     
-                    <div class="bg-white p-4 rounded-xl shadow-sm border">
-                        <h3 class="text-lg font-bold mb-3">Add Components</h3>
-                        <div class="grid grid-cols-2 gap-3">
-                             <button data-action="searchHotels" class="p-3 bg-gray-100 rounded-lg text-sm font-semibold">Book Hotel</button>
-                             <button data-action="searchFlights" class="p-3 bg-gray-100 rounded-lg text-sm font-semibold">Book Flight</button>
-                             <button data-action="addTransport" class="p-3 bg-gray-100 rounded-lg text-sm font-semibold">Add Transport</button>
-                             <button data-action="addActivity" class="p-3 bg-gray-100 rounded-lg text-sm font-semibold">Add Activity</button>
+                    <!-- Right Column: Components & Actions -->
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border">
+                            <h3 class="text-lg font-bold mb-3">Add Components</h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                 <button data-action="searchHotels" class="p-3 bg-gray-100 rounded-lg text-sm font-semibold">Book Hotel</button>
+                                 <button data-action="searchFlights" class="p-3 bg-gray-100 rounded-lg text-sm font-semibold">Book Flight</button>
+                                 <button data-action="addTransport" class="p-3 bg-gray-100 rounded-lg text-sm font-semibold">Add Transport</button>
+                                 <button data-action="addActivity" class="p-3 bg-gray-100 rounded-lg text-sm font-semibold">Add Activity</button>
+                            </div>
                         </div>
-                    </div>
 
-                    <button data-action="generateQuote" class="w-full mt-2 text-white font-bold py-3 px-4 rounded-lg bg-green-500">Generate & Send Quote</button>
+                        <button data-action="generateQuote" class="w-full mt-2 text-white font-bold py-3 px-4 rounded-lg bg-green-500">Generate & Send Quote</button>
+                    </div>
                 </div>
             `;
         },
